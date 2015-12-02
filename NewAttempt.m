@@ -3,7 +3,7 @@
 clear all;
 tic
 xmax =1;
-N = 50; %(Number of points on the x, y interval on which the equation is solved.
+N = 20; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
