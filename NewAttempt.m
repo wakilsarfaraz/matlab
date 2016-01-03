@@ -2,8 +2,8 @@
 % Wakil Sarfaraz with Help of Dr Kathryn Gillow. 22 May 2014 
 clear all;
 tic
-xmax =1;
-N = 20; %(Number of points on the x, y interval on which the equation is solved.
+xmax =10;
+N = 100; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -63,15 +63,69 @@ for n = 1: NTRI
        F(2) = ksi* det(J)*1/2;
        F(3) = eta* det(J)*1/2;
        for i = 1 : 3
+         
            LV(LNODES(n,i)) = LV(LNODES(n,i))+ F(i); % This assigns all the newly computed values to the Load vector.
+
+      
        end 
      
 end
 for i = 1: NNODES
-    if (x(i)==0 || y(i)==0 || x(i)==xmax || y(i)==xmax) % This enforces boundary conditions.
-        LV(i) = 0;
+%     if (x(i)==xmax/2) % This enforces boundary conditions.
+%         LV(i) = 0;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+     if (y(i)==0)
+        LV(i) = 1;
         SP(i,:) = 0;
         SP(i,i) =1 ;
+    else if (y(i)==xmax)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) =1 ;
+    else if (y(i)==xmax/4)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (x(i)==xmax/4)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (y(i)==xmax/2)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (x(i)==xmax/2)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (y(i)==3*xmax/4)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (x(i)==3*xmax/4)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    
+    else if (x(i)==0)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+    else if (x(i)==xmax)
+        LV(i) = 1;
+        SP(i,:) = 0;
+        SP(i,i) = 1;
+        end
+        end
+        end   
+        end
+        end
+        end 
+        end
+        end
+        end
+       
     end
 end
 
@@ -82,6 +136,8 @@ u = sin(pi*x).*sin(2*pi*y);
 
 
 
+
+
 subplot(1,2,1)
 %figure(1)
 trisurf(LNODES,x,y,u)
@@ -89,6 +145,8 @@ xlabel('x')
 ylabel('y')
 zlabel('u(x,y)')
 title('Exact Solution')
+shading interp
+view(2)
 subplot(1,2,2)
 %figure(2)
 trisurf(LNODES,x,y,U)
@@ -96,6 +154,8 @@ xlabel('x')
 ylabel('y')
 zlabel('u(x,y)')
 title('Numerical Solution')
+shading interp
+view(2)
 D = abs(U-u);
 
 
