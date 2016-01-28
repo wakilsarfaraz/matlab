@@ -2,16 +2,16 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 tic
-xmax = 1;
+xmax = 2;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
 d_1 = 1;
-d_2 = 1;
+d_2 = 10;
 a = 0.1;
 b = 0.9;
-gamma = 0.000001;
+gamma = 100;
 
 N = 40; 
 X = linspace(0,xmax,N+1);
@@ -23,6 +23,16 @@ y =y(:);
 NNODES = (N+1)^2;
 U = zeros(NNODES,1);
 V = zeros(NNODES,1);
+
+init_u = 0;
+init_v = 0;
+
+for i = 1 : NNODES
+    U(i) = U(i)+init_u;
+    V(i) = V(i)+init_v;
+end
+
+    
 NTRI = 2*N^2;  
 LNODES = zeros(NTRI,3); 
 for i = 1:N
@@ -55,9 +65,11 @@ for n = 1: NTRI
     
  Astiff = (1/(8*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
-           (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)'];    
- Amass = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3];   
- A1 = gamma*det(J)*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
+           (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
+       
+ Amass = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
+ 
+ A1 = gamma/(10*det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
      (1/18*V(LNODES(n,3))+11/180*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,2))+(11/180*V(LNODES(n,3))+...
      1/18*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,3)) (1/18*V(LNODES(n,3))+11/180*V(LNODES(n,2))-...
      1/30*V(LNODES(n,1)))*U(LNODES(n,1))+(11/180*V(LNODES(n,1))-3/40*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*...
@@ -68,8 +80,33 @@ for n = 1: NTRI
      3/40*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*U(LNODES(n,2))+(1/18*V(LNODES(n,1))-5/72*V(LNODES(n,2))-...
      5/72*V(LNODES(n,3)))*U(LNODES(n,3)) (11/180*V(LNODES(n,1))-3/40*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*U(LNODES(n,1))+...
      (1/8*V(LNODES(n,3))+1/5*V(LNODES(n,2))-3/40*V(LNODES(n,1)))*U(LNODES(n,2))+(1/9*V(LNODES(n,3))+1/8*V(LNODES(n,2))-...
-     5/72*V(LNODES(n,1)))*U(LNODES(n,3)) 1; 0 0 1];
- A2 = (1/det(J))*eye(3,3);
+     5/72*V(LNODES(n,1)))*U(LNODES(n,3)) (1/18*V(LNODES(n,1))-5/72*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*U(LNODES(n,1))+...
+     (1/8*V(LNODES(n,3))+1/9*V(LNODES(n,2))-5/72*V(LNODES(n,1)))*U(LNODES(n,2))+(1/5*V(LNODES(n,3))+1/8*V(LNODES(n,2))-...
+     3/40*V(LNODES(n,1)))*U(LNODES(n,3)); (11/180*V(LNODES(n,3))+1/18*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,1))+...
+     (1/18*V(LNODES(n,1))-5/72*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*U(LNODES(n,2))+(11/180*V(LNODES(n,1))-5/72*V(LNODES(n,2))-...
+     3/40*V(LNODES(n,3)))*U(LNODES(n,3)) (1/18*V(LNODES(n,1))-5/72*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*U(LNODES(n,1))+...
+     (1/8*V(LNODES(n,3))+1/9*V(LNODES(n,2))-5/72*V(LNODES(n,1)))*U(LNODES(n,2))+(1/5*V(LNODES(n,3))+1/8*V(LNODES(n,2))-...
+     3/40*V(LNODES(n,1)))*U(LNODES(n,3)) (11/180*V(LNODES(n,1))-5/72*V(LNODES(n,2))-3/40*V(LNODES(n,3)))*U(LNODES(n,1))+...
+     (1/8*V(LNODES(n,3))+1/9*V(LNODES(n,2))-5/72*V(LNODES(n,1)))*U(LNODES(n,2))+(1/5*V(LNODES(n,3))+1/8*V(LNODES(n,2))-...
+     3/40*V(LNODES(n,1)))*U(LNODES(n,3))];
+ 
+ 
+ A2 = gamma/(10*det(J))*[1/15*(U(LNODES(n,1))*U(LNODES(n,1))-U(LNODES(n,1))*U(LNODES(n,2))-U(LNODES(n,1))*U(LNODES(n,3)))+1/9*...
+     U(LNODES(n,2))*U(LNODES(n,3))+11/180*(U(LNODES(n,2))*U(LNODES(n,2))+U(LNODES(n,3))*U(LNODES(n,3))) 1/9*U(LNODES(n,1))*...
+     U(LNODES(n,3))+11/90*U(LNODES(n,1))*U(LNODES(n,2))-1/30*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,3))-...
+     3/40*U(LNODES(n,2))*U(LNODES(n,2))-5/72*U(LNODES(n,3))*U(LNODES(n,3)) 11/90*U(LNODES(n,1))*U(LNODES(n,3))+1/9*U(LNODES(n,1))*...
+     U(LNODES(n,2))-1/30*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,3))-5/72*U(LNODES(n,2))*U(LNODES(n,2))-...
+     3/40*U(LNODES(n,3))*U(LNODES(n,3));1/9*U(LNODES(n,1))*U(LNODES(n,3))+11/90*U(LNODES(n,1))*U(LNODES(n,2))-1/30*...
+     U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,3))-3/40*U(LNODES(n,2))*U(LNODES(n,2))-5/72*...
+     U(LNODES(n,3))*U(LNODES(n,3)) 11/180*U(LNODES(n,1))*U(LNODES(n,1))-3/20*U(LNODES(n,2))*U(LNODES(n,1))-5/36*U(LNODES(n,3))*...
+     U(LNODES(n,1))+1/4*U(LNODES(n,3))*U(LNODES(n,2))+1/5*U(LNODES(n,2))*U(LNODES(n,2))+1/9*U(LNODES(n,3))*U(LNODES(n,3)) 1/18*...
+     U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,1))-5/36*U(LNODES(n,3))*U(LNODES(n,1))+2/9*U(LNODES(n,3))*...
+     U(LNODES(n,2))+1/8*U(LNODES(n,2))*U(LNODES(n,2))+1/9*U(LNODES(n,3))*U(LNODES(n,3));11/90*U(LNODES(n,1))*U(LNODES(n,3))+1/9*...
+     U(LNODES(n,1))*U(LNODES(n,2))-1/30*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,3))-5/72*U(LNODES(n,2))*...
+     U(LNODES(n,2))-3/40*U(LNODES(n,3))*U(LNODES(n,3)) 1/18*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,1))-...
+     5/36*U(LNODES(n,3))*U(LNODES(n,1))+2/9*U(LNODES(n,3))*U(LNODES(n,2))+1/8*U(LNODES(n,2))*U(LNODES(n,2))+1/9*U(LNODES(n,3))*...
+     U(LNODES(n,3)) 11/180*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,1))*U(LNODES(n,2))-3/20*U(LNODES(n,1))*U(LNODES(n,3))+...
+     1/9*U(LNODES(n,2))*U(LNODES(n,2))+1/4*U(LNODES(n,2))*U(LNODES(n,2))+1/5*U(LNODES(n,3))*U(LNODES(n,3))];
    
    
    
@@ -143,16 +180,17 @@ for j = 1:M+1
     RHSV = (1/dt)*SPMV*V+LV+b;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
-    trisurf(LNODES,x,y,U(:,:),V(:,:))
-%shading interp
-xlabel('x','fontsize',16) 
-xlim([0 xmax])
-ylim([0 xmax])
-zlim([0 0.5])
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of reaction kinetics at t= ',num2str(T(j))],'fontsize',16)
-pause(1e-10) 
+%     trisurf(LNODES,x,y,U(:,:),V(:,:))
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% zlim([0 0.5])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of reaction kinetics at t= ',num2str(T(j))],'fontsize',16)
+% pause(1) 
 
 end
 
@@ -161,9 +199,9 @@ end
  xlabel('x')
  ylabel('y')
  zlabel('u and v')
- %view(2)
+ view(2)
  title ('Schankenberg Kinetics')
- %shading interp
+ shading interp
  
  
  
