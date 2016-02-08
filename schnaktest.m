@@ -2,18 +2,18 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 tic
-xmax = 5;
-tm = 1;
-dt = 0.05;
+xmax = 1;
+tm = 1000;
+dt = 0.1;
 M = tm/dt;
 
-du = 20;
-dv = 2;
+du = 2;
+dv = 1;
 a = 0.1;
 b = 0.9;
-gamma = 500;
+gamma = 20000;
 
-N = 100; 
+N = 80; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -51,12 +51,14 @@ for i = 1 : NNODES
         U(i)=0;
         V(i)=0;
     else
-    U(i) = U(i)+0.0001*pi^2*sin(xmax*pi*x(i)+xmax*pi*y(i));%*sin(0.5*pi*x(i));
-    V(i) = V(i)+0.0001*pi^2*cos(2*pi*x(i))*sin(2*pi*y(i));
+    U(i) = U(i)+0.0001*pi^2*sin(10*xmax*pi*sin(5*pi*x(i))+10*xmax*pi*sin(5*pi*y(i)));%*sin(0.5*pi*x(i));
+    V(i) = V(i)+0.0001*pi^2*sin(15*pi*x(i))*cos(15*pi*y(i));
+%       U(i) = U(i)+sin(x(i))*cos(y(i));
+%       V(i) = V(i)+exp(x(i)/xmax)+exp(y(i)/xmax);
     end
 end
 figure(1)
-suptitle ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
+title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
 subplot (2,2,1)
 trisurf(LNODES,x,y,U(:,:))
 xlabel('x')
@@ -225,36 +227,36 @@ for j = 1:M+1
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
-%     figure(2)
-%     
-% subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% shading interp
-% xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
-% %zlim([0 1])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% %axis equal tight
-% subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
-% shading interp
-% xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
-% %zlim([0 1])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-% %axis equal tight
-% pause(1e-10) 
+    figure(1)
+    
+subplot(1,2,1)
+trisurf(LNODES,x,y,U(:,:))
+shading interp
+xlabel('x','fontsize',16) 
+xlim([0 xmax])
+ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
+subplot(1,2,2)
+trisurf(LNODES,x,y,V(:,:))
+shading interp
+xlabel('x','fontsize',16) 
+xlim([0 xmax])
+ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
+pause(1e-10) 
 
 end
 
+
+%figure(2)
 subplot(2,2,3)
  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
  trisurf(LNODES,x,y,1/max(U)*U(:,:))
