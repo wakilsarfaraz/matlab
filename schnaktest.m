@@ -3,17 +3,17 @@
 clear all;
 tic
 xmax = 1;
-tm = 0.01;
-dt = 0.0001;
+tm = 1;
+dt = 0.01;
 M = tm/dt;
 
-du = 1;
-dv = 5;
+du = 10;
+dv = 1;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gamma = 5000;
 
-N = 80; 
+N = 100; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -57,26 +57,26 @@ for i = 1 : NNODES
 %       V(i) = V(i)+exp(x(i)/xmax)+exp(y(i)/xmax);
     end
 end
-figure(1)
-title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
-subplot (2,2,1)
-trisurf(LNODES,x,y,U(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-%title('Initial pattern of u')
-legend('Initial u')
-shading interp
-axis equal tight
-subplot(2,2,2)
-trisurf(LNODES,x,y,V(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-%title('Initial pattern of v')
-legend('Initial v')
-shading interp
-axis equal tight
+% figure(1)
+% title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
+% subplot (2,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% %title('Initial pattern of u')
+% legend('Initial u')
+% shading interp
+% axis equal tight
+% subplot(2,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% %title('Initial pattern of v')
+% legend('Initial v')
+% shading interp
+% axis equal tight
 
 
 
@@ -229,7 +229,7 @@ for j = 1:M+1
     
     figure(1)
     
-subplot(1,2,1)
+%subplot(1,2,1)
 trisurf(LNODES,x,y,U(:,:))
 shading interp
 xlabel('x','fontsize',16) 
@@ -240,54 +240,56 @@ ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
 title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
-subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
-shading interp
-xlabel('x','fontsize',16) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-pause(1e-10) 
+% subplot(1,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+MV(j)=getframe(gcf);
+%pause(1e-10) 
+
+
 
 end
 
 
-%figure(2)
-subplot(2,2,3)
- %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
- trisurf(LNODES,x,y,1/max(U)*U(:,:))
- %trisurf(LNODES,x,y,1/max(V)*V(:,:))
- xlim([0 xmax])
- ylim([0 xmax])
- xlabel('x')
- ylabel('y')
- %zlabel('u and v')
- view(2)
- %title ('Pattern formed by u')
- legend('Evolved pattern of u')
- shading interp
- axis equal tight
- subplot(2,2,4)
- %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
- %trisurf(LNODES,x,y,1/max(U)*U(:,:))
- trisurf(LNODES,x,y,1/max(V)*V(:,:))
- xlim([0 xmax])
- ylim([0 xmax])
- xlabel('x')
- ylabel('y')
- %zlabel('u and v')
- view(2)
- %title ('Pattern formed by v')
- legend('Evolved pattern of v')
- shading interp
- axis equal tight
+% %figure(2)
+% subplot(2,2,3)
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
+%  trisurf(LNODES,x,y,1/max(U)*U(:,:))
+%  %trisurf(LNODES,x,y,1/max(V)*V(:,:))
+%  xlim([0 xmax])
+%  ylim([0 xmax])
+%  xlabel('x')
+%  ylabel('y')
+%  %zlabel('u and v')
+%  view(2)
+%  %title ('Pattern formed by u')
+%  legend('Evolved pattern of u')
+%  shading interp
+%  axis equal tight
+%  subplot(2,2,4)
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:))
+%  trisurf(LNODES,x,y,1/max(V)*V(:,:))
+%  xlim([0 xmax])
+%  ylim([0 xmax])
+%  xlabel('x')
+%  ylabel('y')
+%  %zlabel('u and v')
+%  view(2)
+%  %title ('Pattern formed by v')
+%  legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
+movie2avi(MV,'SpotsToSptripes.avi');
 
- max(U)
- max(V)
  
  
  
