@@ -3,15 +3,15 @@
 clear all;
 tic
 xmax = 1;
-tm = 1000;
-dt = 0.1;
+tm = 0.01;
+dt = 0.0001;
 M = tm/dt;
 
-du = 2;
-dv = 1;
+du = 1;
+dv = 5;
 a = 0.1;
 b = 0.9;
-gamma = 20000;
+gamma = 300;
 
 N = 80; 
 X = linspace(0,xmax,N+1);
