@@ -4,16 +4,16 @@ clear all;
 tic
 xmax = 1;
 tm = 1;
-dt = 0.01;
+dt = 0.005;
 M = tm/dt;
 
-du = 10;
+du = 5;
 dv = 1;
 a = 0.1;
 b = 0.9;
-gamma = 5000;
+gamma = 38000;
 
-N = 100; 
+N = 150; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -104,7 +104,7 @@ for n = 1: NTRI
  MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
 
  
- CL = gamma*(det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
+ CL = (det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
      (1/18*V(LNODES(n,3))+11/180*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,2))+(11/180*V(LNODES(n,3))+...
      1/18*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,3)) (1/18*V(LNODES(n,3))+11/180*V(LNODES(n,2))-...
      1/30*V(LNODES(n,1)))*U(LNODES(n,1))+(11/180*V(LNODES(n,1))-3/40*V(LNODES(n,2))-5/72*V(LNODES(n,3)))*...
@@ -126,7 +126,7 @@ for n = 1: NTRI
      3/40*V(LNODES(n,1)))*U(LNODES(n,3))];
  
  
- DL = gamma*(det(J))*[1/15*(U(LNODES(n,1))*U(LNODES(n,1))-U(LNODES(n,1))*U(LNODES(n,2))-U(LNODES(n,1))*U(LNODES(n,3)))+1/9*...
+ DL = (det(J))*[1/15*(U(LNODES(n,1))*U(LNODES(n,1))-U(LNODES(n,1))*U(LNODES(n,2))-U(LNODES(n,1))*U(LNODES(n,3)))+1/9*...
      U(LNODES(n,2))*U(LNODES(n,3))+11/180*(U(LNODES(n,2))*U(LNODES(n,2))+U(LNODES(n,3))*U(LNODES(n,3))) 1/9*U(LNODES(n,1))*...
      U(LNODES(n,3))+11/90*U(LNODES(n,1))*U(LNODES(n,2))-1/30*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,2))*U(LNODES(n,3))-...
      3/40*U(LNODES(n,2))*U(LNODES(n,2))-5/72*U(LNODES(n,3))*U(LNODES(n,3)) 11/90*U(LNODES(n,1))*U(LNODES(n,3))+1/9*U(LNODES(n,1))*...
@@ -143,8 +143,8 @@ for n = 1: NTRI
      U(LNODES(n,3)) 11/180*U(LNODES(n,1))*U(LNODES(n,1))-5/36*U(LNODES(n,1))*U(LNODES(n,2))-3/20*U(LNODES(n,1))*U(LNODES(n,3))+...
      1/9*U(LNODES(n,2))*U(LNODES(n,2))+1/4*U(LNODES(n,2))*U(LNODES(n,2))+1/5*U(LNODES(n,3))*U(LNODES(n,3))];
  
- UL = gamma*a*det(J)*[0;1/2;1/2];
- VL = gamma*b*det(J)*[0;1/2;1/2];
+ UL = a*det(J)*[0;1/2;1/2];
+ VL = b*det(J)*[0;1/2;1/2];
    
    
    
@@ -222,8 +222,8 @@ for j = 1:M+1
 %      TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
 %      TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
 
-    RHSU = SPMM*U+dt*UG;
-    RHSV = SPMM*V+dt*VG;
+    RHSU = SPMM*U+dt*gamma*UG;
+    RHSV = SPMM*V+dt*gamma*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
@@ -251,8 +251,8 @@ axis equal tight
 % zlabel('u & v','fontsize',16)
 % title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-MV(j)=getframe(gcf);
-%pause(1e-10) 
+%MV(j)=getframe(gcf);
+pause(1e-10) 
 
 
 
@@ -288,7 +288,7 @@ end
 %  legend('Evolved pattern of v')
 %  shading interp
 %  axis equal tight
-movie2avi(MV,'SpotsToSptripes.avi');
+%movie2avi(MV,'SpotsToSptripes.avi');
 
  
  
