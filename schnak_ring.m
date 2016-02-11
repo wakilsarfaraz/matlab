@@ -9,15 +9,15 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 3;
-dv = 0.4;
+du = 0.2;
+dv = 0.1;
 a = 0.1;
 b = 0.9;
-gamma = 3000;
+gamma = 300;
 T = linspace(0, tm,M+1); 
 
- fd=inline('sqrt(sum(p.^2,2))-1','p');
- [p,t]=distmesh2d(fd,@huniform,0.02,[-1,-1;1,1],[]);
+  fd=inline('-0.1+abs(0.2-sqrt(sum(p.^2,2)))');
+  [p,t]=distmesh2d(fd,@huniform,0.005,[-1,-1;1,1],[]);
 
 x = p(:,1);
 y = p(:,2);
@@ -35,7 +35,8 @@ V = zeros(NNODES,1);
 for i = 1 : NNODES
 
     U(i) = U(i)+0.0001*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
-    V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
+    %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
+    V(i) = V(i)+0.001*sin(50*pi*x(i)+5*pi*y(i));
 end
 figure(1)
 title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
