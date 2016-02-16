@@ -2,23 +2,23 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-addpath distmesh
-
-% xmax = 1;
+%addpath distmesh
+xmax = 1;
+N = 100;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 4;
-dv = 0.4;
+du = 0.3;
+dv = 0.005;
 a = 0.1;
 b = 0.9;
-gamma = 10000;
+gamma = 300000;
 T = linspace(0, tm,M+1); 
 
- fd=inline('ddiff(drectangle(p,-1,1,-1,1),dcircle(p,0,0,0.5))','p');
- pfix=[-1,-1; -1,1;1,-1;1,1];
- [p,t]=distmesh2d(fd,@huniform,0.02,[-1,-1;1,1],pfix);
+ fd=inline('ddiff(drectangle(p,-0.5,0.5,-0.5,0.5),dcircle(p,0,0,0.3))','p');
+ pfix=[-0.5,-0.5; -0.5,0.5;0.5,-0.5;0.5,0.5];
+ [p,t]=distmesh2d(fd,@huniform,xmax/N,[-0.5,-0.5;0.5,0.5],pfix);
 
 x = p(:,1);
 y = p(:,2);
@@ -34,10 +34,15 @@ V = zeros(NNODES,1);
 
 
 for i = 1 : NNODES
+    if (abs(fd(p(i,:))) <= 1e-8)
+        U(i) = 0;
+        V(i) = 0;
+    else
 
     U(i) = U(i)+0.0001*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
     %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
     V(i) = V(i)+0.001*sin(50*pi*x(i)+5*pi*y(i));
+    end
 end
 figure(1)
 title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
@@ -81,7 +86,7 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
- MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
+ MassL = det(J)/120*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
 
  
  CL = (det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
@@ -150,8 +155,31 @@ for n = 1: NTRI
 end
 
 
+for i = 1 : NNODES
+    if (abs(fd(p(i,:)))<=1e-8 )
+        RHSU(i) = 0;
+        RHSV(i) = 0;
+        TMatrixU(i,:) = 0;
+        TMatrixV(i,:) = 0;
+        TMatrixU(i,i) = 1;
+        TMatrixV(i,i) = 1;
+    end
+end
+
+
  TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
+ 
+ for i = 1 : NNODES
+    if (abs(fd(p(i,:)))<=1e-8 )
+        RHSU(i) = 0;
+        RHSV(i) = 0;
+        TMatrixU(i,:) = 0;
+        TMatrixV(i,:) = 0;
+        TMatrixU(i,i) = 1;
+        TMatrixV(i,i) = 1;
+    end
+end
 
 for j = 1:M+1
 

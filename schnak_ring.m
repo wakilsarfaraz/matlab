@@ -36,7 +36,7 @@ V = zeros(NNODES,1);
 
 
 for i = 1 : NNODES
-    if (abs(fd(p))<=1e-8)
+    if (abs(fd(p(i,:)))<=1e-8)
         U(i) = 0;
         V(i) = 0;
     else
