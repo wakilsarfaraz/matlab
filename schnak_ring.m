@@ -2,22 +2,22 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-addpath distmesh2d
+addpath distmesh
 
 % xmax = 1;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.2;
-dv = 0.1;
+du = 0.08;
+dv = 0.01;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gamma = 300000;
 T = linspace(0, tm,M+1); 
 
   fd=inline('-0.1+abs(0.2-sqrt(sum(p.^2,2)))');
-  [p,t]=distmesh2d(fd,@huniform,0.005,[-1,-1;1,1],[]);
+  [p,t]=distmesh2d(fd,@huniform,0.01,[-1,-1;1,1],[]);
 
 x = p(:,1);
 y = p(:,2);
@@ -38,24 +38,24 @@ for i = 1 : NNODES
     %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
     V(i) = V(i)+0.001*sin(50*pi*x(i)+5*pi*y(i));
 end
-figure(1)
-title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
-subplot (2,2,1)
-trisurf(LNODES,x,y,U(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-legend('Initial u')
-shading interp
-axis equal tight
-subplot(2,2,2)
-trisurf(LNODES,x,y,V(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-legend('Initial v')
-shading interp
-axis equal tight
+% figure(1)
+% title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
+% subplot (2,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% legend('Initial u')
+% shading interp
+% axis equal tight
+% subplot(2,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% legend('Initial v')
+% shading interp
+% axis equal tight
 
 
 
@@ -80,7 +80,7 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
- MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
+ MassL = det(J)/120*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
 
  
  CL = (det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
@@ -160,21 +160,21 @@ for j = 1:M+1
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
-%     figure(1)
-%     
-% subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+    figure(1)
+    
+%subplot(1,2,1)
+trisurf(LNODES,x,y,1/max(U)*U(:,:))
+shading interp
+xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
 % subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
+% trisurf(LNODES,x,y,1/max(V)*V(:,:))
 % shading interp
 % xlabel('x','fontsize',16) 
 % % xlim([0 xmax])
@@ -192,8 +192,8 @@ pause(1e-10)
 end
 
 
-%figure(2)
-subplot(2,2,3)
+figure(2)
+subplot(1,2,1)
  trisurf(LNODES,x,y,1/max(U)*U(:,:))
  xlabel('x')
  ylabel('y')
@@ -201,7 +201,7 @@ subplot(2,2,3)
  legend('Evolved pattern of u')
  shading interp
  axis equal tight
- subplot(2,2,4)
+ subplot(1,2,2)
  trisurf(LNODES,x,y,1/max(V)*V(:,:))
  xlabel('x')
  ylabel('y')
