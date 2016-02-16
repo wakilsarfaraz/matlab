@@ -2,7 +2,7 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-addpath distmesh2d
+addpath distmesh
 
 % xmax = 1;
 tm = 1;
