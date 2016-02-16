@@ -4,20 +4,22 @@ clear all;
 
 addpath distmesh2d
 
-% xmax = 1;
+
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 3;
-dv = 0.4;
+du = 0.005;
+dv = 0.01;
 a = 0.1;
 b = 0.9;
 gamma = 3000;
 T = linspace(0, tm,M+1); 
 
- fd=inline('sqrt(sum(p.^2,2))-1','p');
- [p,t]=distmesh2d(fd,@huniform,0.02,[-1,-1;1,1],[]);
+xmax = 1;
+N = 100;
+ fd=inline('sqrt(sum(p.^2,2))-0.5','p');
+ [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
 x = p(:,1);
 y = p(:,2);
@@ -37,24 +39,24 @@ for i = 1 : NNODES
     U(i) = U(i)+0.0001*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
     V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
 end
-figure(1)
-title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
-subplot (2,2,1)
-trisurf(LNODES,x,y,U(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-legend('Initial u')
-shading interp
-axis equal tight
-subplot(2,2,2)
-trisurf(LNODES,x,y,V(:,:))
-xlabel('x')
-ylabel('y')
-view(2)
-legend('Initial v')
-shading interp
-axis equal tight
+% figure(1)
+% title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
+% subplot (2,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% legend('Initial u')
+% shading interp
+% axis equal tight
+% subplot(2,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% xlabel('x')
+% ylabel('y')
+% view(2)
+% legend('Initial v')
+% shading interp
+% axis equal tight
 
 
 
@@ -79,7 +81,8 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
- MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
+ %MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3];
+ MassL = det(J)/120*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
 
  
  CL = (det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
@@ -151,6 +154,21 @@ end
  TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
 
+
+for i = 1 : NNODES
+    if (abs(fd(p(i,:)))<=1e-8 )
+        RHSU(i) = 0;
+        RHSV(i) = 0;
+        TMatrixU(i,:) = 0;
+        TMatrixV(i,:) = 0;
+        TMatrixU(i,i) = 1;
+        TMatrixV(i,i) = 1;
+    end
+end
+
+
+
+
 for j = 1:M+1
 
 
@@ -162,18 +180,18 @@ for j = 1:M+1
 %     figure(1)
 %     
 % subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+trisurf(LNODES,x,y,1/max(U)*U(:,:))
+shading interp
+xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
 % subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
+% trisurf(LNODES,x,y,1/max(V)*V(:,:))
 % shading interp
 % xlabel('x','fontsize',16) 
 % % xlim([0 xmax])
@@ -192,20 +210,22 @@ end
 
 
 %figure(2)
-subplot(2,2,3)
- trisurf(LNODES,x,y,1/max(U)*U(:,:))
- xlabel('x')
- ylabel('y')
- view(2)
- legend('Evolved pattern of u')
- shading interp
- axis equal tight
- subplot(2,2,4)
- trisurf(LNODES,x,y,1/max(V)*V(:,:))
- xlabel('x')
- ylabel('y')
- view(2)
- legend('Evolved pattern of v')
- shading interp
- axis equal tight
+% subplot(2,2,3)
+%  trisurf(LNODES,x,y,1/max(U)*U(:,:))
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
+%  legend('Evolved pattern of u')
+%  shading interp
+%  axis equal tight
+%  subplot(2,2,4)
+%  trisurf(LNODES,x,y,1/max(V)*V(:,:))
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
+%  legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
+max(U)
+max(V)
