@@ -4,14 +4,14 @@ clear all;
 tic
 xmax = 1;
 tm = 1;
-dt = 0.005;
+dt = 0.01;
 M = tm/dt;
 
-du = 5;
+du = 0.25;
 dv = 1;
 a = 0.1;
 b = 0.9;
-gamma = 38000;
+gamma = 300000;
 
 N = 150; 
 X = linspace(0,xmax,N+1);
@@ -26,6 +26,9 @@ NNODES = (N+1)^2;
 
 U = zeros(NNODES,1);
 V = zeros(NNODES,1);
+
+q_weights = [0.33333333 0.333333333 1.000000]';
+nq = 3;
 
 
 
@@ -101,8 +104,10 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
- MassL = det(J)*[1/6 -1/12 -1/12; -1/12 1/3 1/4; -1/12 1/4 1/3]; 
-
+ MassL = det(J)/120*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
+%    MassL= (det(J)/120)*[6*r1(1)+2*r2(2)+2*r3(1) 2*r1(2)+2*r2(1)+r3(2) 2*r1(1)+r2(2)+2*r3(1);...
+%        2*r1(2)+2*r2(1)+r3(2) 2*r1(1)+2*r2(2)+2*r3(1) r1(2)+2*r2(1)+2*r3(2);...
+%        2*r1(1)+r2(2)+2*r3(1) r1(2)+2*r2(1)+2*r3(2)  2*r1(1)+2*r2(2)+2*r3(1)];
  
  CL = (det(J))*[(1/15*V(LNODES(n,1))-1/30*V(LNODES(n,2))-1/30*V(LNODES(n,3)))*U(LNODES(n,1))+...
      (1/18*V(LNODES(n,3))+11/180*V(LNODES(n,2))-1/30*V(LNODES(n,1)))*U(LNODES(n,2))+(11/180*V(LNODES(n,3))+...
@@ -179,7 +184,6 @@ for i = 1: NNODES
         RHSV(i) = 0;
         TMatrixU(i,:) = 0;
         TMatrixV(i,:) = 0;
-        %SPMM(i,:) = 0;
         TMatrixU(i,i) = 1;
         TMatrixV(i,i) = 1;
     end
@@ -230,7 +234,7 @@ for j = 1:M+1
     figure(1)
     
 %subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
+trisurf(LNODES,x,y,1/max(U)*U(:,:))
 shading interp
 xlabel('x','fontsize',16) 
 xlim([0 xmax])
@@ -241,7 +245,7 @@ zlabel('u & v','fontsize',16)
 title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
+% trisurf(LNODES,x,y,1/max(V)*V(:,:))
 % shading interp
 % xlabel('x','fontsize',16) 
 % xlim([0 xmax])
@@ -289,7 +293,8 @@ end
 %  shading interp
 %  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-
+max(U)
+max(V)
  
  
  
