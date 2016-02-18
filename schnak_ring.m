@@ -4,7 +4,7 @@ clear all;
 
 %addpath distmesh
 
-N = 100;
+N = 64;
 xmax = 1;
 
 % xmax = 1;
@@ -12,8 +12,8 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.01;
-dv = 0.002;
+du = 0.05;
+dv = 0.005;
 a = 0.1;
 b = 0.9;
 gamma = 30000;
@@ -41,9 +41,10 @@ for i = 1 : NNODES
         V(i) = 0;
     else
 
-    U(i) = U(i)+0.0001*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
-    %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
-    V(i) = V(i)+0.001*sin(50*pi*x(i)+5*pi*y(i));
+    %U(i) = U(i)+0.0001*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
+    %V(i) = V(i)+0.001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
+    U(i) = U(i)+0.001*sin(50*pi*sin(50*pi*x(i))+50*pi*sin(50*pi*y(i)));
+    V(i) = V(i)+0.001*sin(50*cos(pi*x(i))+5*sin(pi*y(i)));
     end
 end
 figure(1)

@@ -3,17 +3,17 @@
 clear all;
 tic
 xmax = 1;
-tm = 1;
+tm = 3;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.25;
-dv = 1;
+du = 0.01;
+dv = 10;
 a = 0.1;
 b = 0.9;
-gamma = 300000;
+gamma = 4000;
 
-N = 150; 
+N = 90; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -177,6 +177,9 @@ end
 
  TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
+%  
+%     RHSU = SPMM*U+dt*gamma*UG;
+%     RHSV = SPMM*V+dt*gamma*VG;
 
 for i = 1: NNODES
     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
@@ -187,39 +190,6 @@ for i = 1: NNODES
         TMatrixU(i,i) = 1;
         TMatrixV(i,i) = 1;
     end
-%     if (x(i)==xmax && y(i)>=0 && y(i) <= xmax)  
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         SPMM(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%     elseif (x(i)==0 && y(i)>=0 && y(i) <= xmax)  
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         SPMM(i,:) = 0;
-%         TMatrixU(i,i) =1;
-%         TMatrixV(i,i) =1;
-%      elseif (y(i) == 0 && x(i) >= 0 && x(i) <= xmax) 
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%         SPMM(i,:) = 0;
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%     elseif ( y(i) == xmax && x(i) >= 0 && x(i) <= xmax) 
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%         SPMM(i,:) = 0;
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%     end
 end
 
 for j = 1:M+1
@@ -255,7 +225,7 @@ axis equal tight
 % zlabel('u & v','fontsize',16)
 % title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-%MV(j)=getframe(gcf);
+MV(j)=getframe(gcf);
 pause(1e-10) 
 
 
@@ -292,7 +262,7 @@ end
 %  legend('Evolved pattern of v')
 %  shading interp
 %  axis equal tight
-%movie2avi(MV,'SpotsToSptripes.avi');
+movie2avi(MV,'rapid_patttern.avi');
 max(U)
 max(V)
  

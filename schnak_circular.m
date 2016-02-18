@@ -2,22 +2,22 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-addpath distmesh2d
+addpath distmesh
 
 
-tm = 1;
+tm = 1.5;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.005;
-dv = 0.01;
+du = 0.02;
+dv = 1;
 a = 0.1;
 b = 0.9;
-gamma = 3000;
+gamma = 30000;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 100;
+N = 64;
  fd=inline('sqrt(sum(p.^2,2))-0.5','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
@@ -201,7 +201,7 @@ axis equal tight
 % zlabel('u & v','fontsize',16)
 % title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-%MV(j)=getframe(gcf);
+MV(j)=getframe(gcf);
 pause(1e-10) 
 
 
@@ -226,6 +226,5 @@ end
 %  legend('Evolved pattern of v')
 %  shading interp
 %  axis equal tight
-%movie2avi(MV,'SpotsToSptripes.avi');
-max(U)
-max(V)
+movie2avi(MV,'Disc_pattern.avi');
+
