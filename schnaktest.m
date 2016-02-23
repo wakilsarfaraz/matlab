@@ -3,15 +3,15 @@
 clear all;
 tic
 xmax = 1;
-tm = 2;
+tm = 1;
 dt = 0.01;
 M = tm/dt;
 
 du = 50;
-dv = 1;
+dv = 25;
 a = 0.1;
 b = 0.9;
-gamma = 900000;
+gamma = 300;
 
 N = 100; 
 X = linspace(0,xmax,N+1);
@@ -51,15 +51,17 @@ end
 
 for i = 1 : NNODES
     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
-        U(i)=0;
-        V(i)=0;
+        U(i) = 0;
+        V(i) = 0;
     else
-    U(i) = U(i)+0.0001*pi^2*sin(10*xmax*pi*sin(5*pi*x(i))+10*xmax*pi*sin(5*pi*y(i)));%*sin(0.5*pi*x(i));
-    V(i) = V(i)+0.0001*pi^2*sin(15*pi*x(i))*cos(15*pi*y(i));
-%       U(i) = U(i)+sin(x(i))*cos(y(i));
-%       V(i) = V(i)+exp(x(i)/xmax)+exp(y(i)/xmax);
+    U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
+    V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+  
+    %V(i) = b/(a+b)^2; 
     end
 end
+ui = [min(U) max(U)]
+vi = [min(V) max(V)]
 % figure(1)
 % title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
 % subplot (2,2,1)
@@ -100,7 +102,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
     
- StiffL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ StiffL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
@@ -229,19 +231,21 @@ for j = 1:M+1
     
     figure(1)
     
-subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
-shading interp
-xlabel('x','fontsize',16) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-subplot(1,2,2)
+%subplot(1,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+% subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
+colorbar
 shading interp
 xlabel('x','fontsize',16) 
 xlim([0 xmax])
@@ -289,8 +293,8 @@ end
 %  shading interp
 %  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-max(U)
-max(V)
+uf = [min(U) max(U)]
+vf = [min(V) max(V)]
  
  
  
