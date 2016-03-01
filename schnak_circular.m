@@ -9,15 +9,15 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 50;
-dv = 2;
+du = 1;
+dv = 7;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gamma = 100;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 150;
+N = 64;
  fd=inline('sqrt(sum(p.^2,2))-0.5','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 

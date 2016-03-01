@@ -4,19 +4,19 @@ clear all;
 
 %addpath distmesh
 xmax = 1;
-N = 150;
+N = 64;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 50;
-dv = 0.5;
+du = 1;
+dv = 3;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gam = 30;
 T = linspace(0, tm,M+1); 
 
- fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.4))','p');
+ fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.2))','p');
  pfix=[0,0; 0,1;1,0;1,1];
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[0,0;1,1],pfix);
 
@@ -41,9 +41,9 @@ for i = 1 : NNODES
 
     %U(i) = U(i)+0.1*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
     %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
-    V(i) = a + b + 0.001*exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
+    U(i) = a + b + 0.001*exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
     %V(i) = V(i)+sin(50*pi*x(i)+5*pi*y(i));
-    U(i) = b/(a+b)^2; 
+    V(i) = b/(a+b)^2; 
     end
 end
 ui = [min(U) max(U)]
@@ -171,8 +171,8 @@ for i = 1 : NNODES
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
+ TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
  
  for i = 1 : NNODES
     if (abs(fd(p(i,:)))<=1e-8 )
@@ -188,8 +188,8 @@ end
 for j = 1:M+1
 
 
-    RHSU = SPMM*U+dt*gamma*UG;
-    RHSV = SPMM*V+dt*gamma*VG;
+    RHSU = SPMM*U+dt*gam*UG;
+    RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     

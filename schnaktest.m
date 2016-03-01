@@ -7,8 +7,8 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 50;
-dv = 25;
+du = 1;
+dv = 15;
 a = 0.1;
 b = 0.9;
 gamma = 300;
@@ -244,7 +244,7 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,abs(V(:,:)))
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
@@ -293,8 +293,8 @@ end
 %  shading interp
 %  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-uf = [min(U) max(U)]
-vf = [min(V) max(V)]
+uf = [min(abs(U)) max(abs(U))]
+vf = [min(abs(V)) max(abs(V))]
  
  
  

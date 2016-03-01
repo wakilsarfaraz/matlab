@@ -5,21 +5,20 @@ clear all;
 %addpath distmesh
 %format long
 
-N = 150;
+N = 100;
 xmax = 1;
 
-% xmax = 1;
-tm = 1;
+tm = 5;
 dt = 0.01;
 M = tm/dt;
 
-du = 50;
-dv = 0.3;
+du = 0.01;
+dv = 5;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gam = 39.596;
 T = linspace(0, tm,M+1); 
-  fd=inline('-0.02+abs(0.45-sqrt(sum(p.^2,2)))');
+  fd=inline('-0.08+abs(0.45-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
 x = p(:,1);
@@ -93,7 +92,7 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
- MassL = det(J)/320*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
+ MassL = det(J)*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
  
 
  CL = det(J)/360*[12*U(LNODES(n,1))*V(LNODES(n,1))+3*(U(LNODES(n,1))*V(LNODES(n,2))+U(LNODES(n,2))*V(LNODES(n,1))+...
@@ -158,8 +157,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
     
        
 end
- TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
+ TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
 for i = 1 : NNODES
     if (abs(fd(p(i,:)))<=1e-8 )
         RHSU(i) = 0;
@@ -178,27 +177,15 @@ end
 for j = 1:M+1
 
 
-    RHSU = SPMM*U+dt*gamma*UG;
-    RHSV = SPMM*V+dt*gamma*VG;
+    RHSU = SPMM*U+dt*gam*UG;
+    RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
     %figure(1)
     
 %subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
-% subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,U(:,:))
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
@@ -207,8 +194,20 @@ xlabel('x','fontsize',16)
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
+% subplot(1,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% % xlim([0 xmax])
+% % ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
 
