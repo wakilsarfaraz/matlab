@@ -17,7 +17,7 @@ gamma = 300;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 40;
+N = 10;
 
     fd=@(p) p(:,1).^2/3^2+p(:,2).^2/0.5^2-1;
     [p,t]=distmesh2d(fd,@huniform,xmax/N,[-3,-1;3,1],[]);

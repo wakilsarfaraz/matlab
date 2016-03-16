@@ -8,12 +8,12 @@ dt = 0.01;
 M = tm/dt;
 
 du = 1;
-dv = 15;
+dv = 16;
 a = 0.1;
 b = 0.9;
-gamma = 300;
+gam = 30;
 
-N = 100; 
+N = 40; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -26,10 +26,6 @@ NNODES = (N+1)^2;
 
 U = zeros(NNODES,1);
 V = zeros(NNODES,1);
-
-q_weights = [0.33333333 0.333333333 1.000000]';
-nq = 3;
-
 
 
 
@@ -173,8 +169,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
+ TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
 
 for i = 1: NNODES
     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
@@ -185,51 +181,17 @@ for i = 1: NNODES
         TMatrixU(i,i) = 1;
         TMatrixV(i,i) = 1;
     end
-%     if (x(i)==xmax && y(i)>=0 && y(i) <= xmax)  
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         SPMM(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%     elseif (x(i)==0 && y(i)>=0 && y(i) <= xmax)  
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         SPMM(i,:) = 0;
-%         TMatrixU(i,i) =1;
-%         TMatrixV(i,i) =1;
-%      elseif (y(i) == 0 && x(i) >= 0 && x(i) <= xmax) 
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%         SPMM(i,:) = 0;
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%     elseif ( y(i) == xmax && x(i) >= 0 && x(i) <= xmax) 
-%         TMatrixU(i,:) = 0;
-%         TMatrixV(i,:) = 0;
-%         TMatrixU(i,i) = 1;
-%         TMatrixV(i,i) = 1;
-%         SPMM(i,:) = 0;
-%         RHSU(i) = 0;
-%         RHSV(i) = 0;
-%     end
+
 end
 
 for j = 1:M+1
-%      TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
-%      TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
 
-    RHSU = SPMM*U+dt*gamma*UG;
-    RHSV = SPMM*V+dt*gamma*VG;
+    RHSU = SPMM*U+dt*gam*UG;
+    RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
-    figure(1)
+   % figure(1)
     
 %subplot(1,2,1)
 % trisurf(LNODES,x,y,U(:,:))
@@ -244,17 +206,17 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-trisurf(LNODES,x,y,abs(V(:,:)))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
+% trisurf(LNODES,x,y,V(:,:))
+% colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
 
@@ -267,7 +229,7 @@ end
 % subplot(2,2,3)
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
 %  trisurf(LNODES,x,y,U(:,:))
-%  %trisurf(LNODES,x,y,1/max(V)*V(:,:))
+% %  %trisurf(LNODES,x,y,1/max(V)*V(:,:))
 %  xlim([0 xmax])
 %  ylim([0 xmax])
 %  xlabel('x')
@@ -278,23 +240,26 @@ end
 %  legend('Evolved pattern of u')
 %  shading interp
 %  axis equal tight
+%  hold on
 %  subplot(2,2,4)
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:))
-%  trisurf(LNODES,x,y,V(:,:))
-%  xlim([0 xmax])
-%  ylim([0 xmax])
-%  xlabel('x')
-%  ylabel('y')
-%  %zlabel('u and v')
-%  view(2)
-%  %title ('Pattern formed by v')
-%  legend('Evolved pattern of v')
-%  shading interp
-%  axis equal tight
+ trisurf(LNODES,x,y,abs(V(:,:)))
+ colorbar 
+ xlim([0 xmax])
+ ylim([0 xmax])
+ xlabel('x')
+ ylabel('y')
+ view(2)
+ %title ('Pattern formed by v')
+ legend('Evolved pattern of v')
+ shading interp
+ axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
 uf = [min(abs(U)) max(abs(U))]
 vf = [min(abs(V)) max(abs(V))]
+
+hold off
  
  
  

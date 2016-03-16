@@ -2,21 +2,22 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-%addpath distmesh
+addpath distmesh
 %format long
 
-N = 100;
+N = 50;
 xmax = 1;
 
-tm = 5;
+tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.01;
+du = 1;
 dv = 5;
 a = 0.1;
 b = 0.9;
-gam = 39.596;
+%gam = 39.596;
+gam = 40.6;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.08+abs(0.45-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
@@ -185,19 +186,7 @@ for j = 1:M+1
     %figure(1)
     
 %subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-% subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
+% trisurf(LNODES,x,y,U(:,:))
 % colorbar
 % shading interp
 % xlabel('x','fontsize',16) 
@@ -206,8 +195,20 @@ axis equal tight
 % view(2)
 % ylabel('y','fontsize',16)
 % zlabel('u & v','fontsize',16)
-% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
+% subplot(1,2,2)
+trisurf(LNODES,x,y,V(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
 
