@@ -256,7 +256,7 @@ end
  shading interp
  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-uf = [min(abs(U)) max(abs(U))]
+uf = [min(abs(U)) max(U))]
 vf = [min(abs(V)) max(abs(V))]
 
 hold off

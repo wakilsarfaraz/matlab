@@ -4,19 +4,19 @@ clear all;
 
 %addpath distmesh
 xmax = 1;
-N = 64;
+N = 50;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
 du = 1;
-dv = 3;
+dv = 5;
 a = 0.1;
 b = 0.9;
-gam = 30;
+gam = 41.8;
 T = linspace(0, tm,M+1); 
 
- fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.2))','p');
+ fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.35))','p');
  pfix=[0,0; 0,1;1,0;1,1];
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[0,0;1,1],pfix);
 
