@@ -5,7 +5,7 @@ clear all;
 %addpath distmesh
 xmax = 1;
 N = 50;
-tm = 1;
+tm = 3;
 dt = 0.01;
 M = tm/dt;
 
@@ -13,10 +13,10 @@ du = 1;
 dv = 5;
 a = 0.1;
 b = 0.9;
-gam = 41.8;
+gam = 39.9;
 T = linspace(0, tm,M+1); 
 
- fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.35))','p');
+ fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.4))','p');
  pfix=[0,0; 0,1;1,0;1,1];
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[0,0;1,1],pfix);
 
@@ -41,7 +41,7 @@ for i = 1 : NNODES
 
     %U(i) = U(i)+0.1*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
     %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
-    U(i) = a + b + 0.001*exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
+    U(i) = a + b + exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
     %V(i) = V(i)+sin(50*pi*x(i)+5*pi*y(i));
     V(i) = b/(a+b)^2; 
     end
@@ -208,17 +208,17 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
+% trisurf(LNODES,x,y,V(:,:))
+% %colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% % xlim([0 xmax])
+% % ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 
 
@@ -238,14 +238,14 @@ end
 %  shading interp
 %  axis equal tight
 %  subplot(1,2,2)
-%  trisurf(LNODES,x,y,1/max(V)*V(:,:))
-%  colorbar
-%  xlabel('x')
-%  ylabel('y')
-%  view(2)
-%  legend('Evolved pattern of v')
-%  shading interp
-%  axis equal tight
+ trisurf(LNODES,x,y,V(:,:))
+ colorbar
+ xlabel('x')
+ ylabel('y')
+ view(2)
+ legend('Evolved pattern of v')
+ shading interp
+ axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
 
 uf=[min(U) max(U)]

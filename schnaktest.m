@@ -8,12 +8,12 @@ dt = 0.01;
 M = tm/dt;
 
 du = 1;
-dv = 16;
+dv = 5;
 a = 0.1;
 b = 0.9;
-gam = 30;
+gam = 10.49;
 
-N = 40; 
+N = 50; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -244,7 +244,7 @@ end
 %  subplot(2,2,4)
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:))
- trisurf(LNODES,x,y,abs(V(:,:)))
+ trisurf(LNODES,x,y,V(:,:))
  colorbar 
  xlim([0 xmax])
  ylim([0 xmax])
@@ -256,7 +256,7 @@ end
  shading interp
  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-uf = [min(abs(U)) max(U))]
+uf = [min(abs(U)) max(U)]
 vf = [min(abs(V)) max(abs(V))]
 
 hold off
