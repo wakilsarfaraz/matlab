@@ -9,15 +9,15 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 1;
-dv = 7;
+du = 10;
+dv = 5;
 a = 0.1;
 b = 0.9;
-gamma = 100;
+gamma = 38;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 64;
+N = 50;
  fd=inline('sqrt(sum(p.^2,2))-0.5','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
@@ -42,9 +42,9 @@ for i = 1 : NNODES
 
 
     U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-    V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+    %V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
   
-    %V(i) = b/(a+b)^2; 
+    V(i) = b/(a+b)^2; 
     end
 end
 ui = [min(U) max(U)]
@@ -210,8 +210,8 @@ ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
 title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
-%MV(j)=getframe(gcf);
-pause(1e-10) 
+% %MV(j)=getframe(gcf);
+ pause(1e-10) 
 
 
 
@@ -228,13 +228,14 @@ end
 %  shading interp
 %  axis equal tight
 %  subplot(2,2,4)
-%  trisurf(LNODES,x,y,1/max(V)*V(:,:))
-%  xlabel('x')
-%  ylabel('y')
-%  view(2)
-%  legend('Evolved pattern of v')
-%  shading interp
-%  axis equal tight
+ trisurf(LNODES,x,y,abs(V(:,:)))
+ colorbar
+ xlabel('x')
+ ylabel('y')
+ view(2)
+ legend('Evolved pattern of v')
+ shading interp
+ axis equal tight
 %movie2avi(MV,'Disc_pattern.avi');
 
 uf = [min(U) max(U)]
