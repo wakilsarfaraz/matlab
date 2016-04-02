@@ -5,15 +5,15 @@ clear all;
 %addpath distmesh
 
 
-tm = 1;
-dt = 0.01;
+tm = 5;
+dt = 0.05;
 M = tm/dt;
 
 du = 10;
-dv = 5;
+dv = 4.1;
 a = 0.1;
 b = 0.9;
-gamma = 38;
+gamma = 37.5;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
@@ -87,7 +87,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
     
- StiffL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ StiffL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
@@ -203,8 +203,6 @@ trisurf(LNODES,x,y,V(:,:))
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
@@ -228,14 +226,14 @@ end
 %  shading interp
 %  axis equal tight
 %  subplot(2,2,4)
- trisurf(LNODES,x,y,abs(V(:,:)))
- colorbar
- xlabel('x')
- ylabel('y')
- view(2)
- legend('Evolved pattern of v')
- shading interp
- axis equal tight
+%  trisurf(LNODES,x,y,abs(V(:,:)))
+%  colorbar
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
+%  legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
 %movie2avi(MV,'Disc_pattern.avi');
 
 uf = [min(U) max(U)]

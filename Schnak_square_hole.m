@@ -5,15 +5,15 @@ clear all;
 %addpath distmesh
 xmax = 1;
 N = 50;
-tm = 3;
-dt = 0.01;
+tm = 2;
+dt = 0.05;
 M = tm/dt;
 
-du = 1;
-dv = 5;
+du = 10;
+dv = 4.5;
 a = 0.1;
 b = 0.9;
-gam = 39.9;
+gam = 36;
 T = linspace(0, tm,M+1); 
 
  fd=inline('ddiff(drectangle(p,0,1,0,1),dcircle(p,0.5,0.5,0.4))','p');
@@ -208,17 +208,17 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
-% %colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+trisurf(LNODES,x,y,V(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 
 
@@ -238,14 +238,14 @@ end
 %  shading interp
 %  axis equal tight
 %  subplot(1,2,2)
- trisurf(LNODES,x,y,V(:,:))
- colorbar
- xlabel('x')
- ylabel('y')
- view(2)
- legend('Evolved pattern of v')
- shading interp
- axis equal tight
+%  trisurf(LNODES,x,y,V(:,:))
+%  colorbar
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
+%  legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
 
 uf=[min(U) max(U)]

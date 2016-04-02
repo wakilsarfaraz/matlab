@@ -28,7 +28,7 @@ k2 = 2.1;
 
 tau = 0.5; % Delay Parameter
 
-N = 40;
+N = 80;
 X = linspace(0,xmax,N+1);
 T = linspace(0,tm,M+1);
 
@@ -92,13 +92,19 @@ for n = 1: NTRI
     r1 = [x(LNODES(n,1)) y(LNODES(n,1))];
     r2 = [x(LNODES(n,2)) y(LNODES(n,2))];
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
-    J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
+    J = [1 1 1; r1(1) r2(1) r3(1); r1(2) r2(2) r3(2)]; 
     
- SL = (1/(32*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ SL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)'];      
  ML = det(J)*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
- CL = eye(3,3);
+ CL = b*det(J)/120*[6*H(LNODES(n,1))+2*H(LNODES(n,2))+2*H(LNODES(n,3)) 2*...
+     H(LNODES(n,1))+2*H(LNODES(n,2))+H(LNODES(n,3)) 2*H(LNODES(n,1))+...
+     H(LNODES(n,2))+2*H(LNODES(n,3));2*H(LNODES(n,1))+2*H(LNODES(n,2))+...
+     H(LNODES(n,3)) 2*H(LNODES(n,1))+6*H(LNODES(n,2))+2*H(LNODES(n,3)) ...
+     H(LNODES(n,1))+2*H(LNODES(n,2))+2*H(LNODES(n,3));2*H(LNODES(n,1))+...
+     H(LNODES(n,2))+2*H(LNODES(n,3))  H(LNODES(n,1))+2*H(LNODES(n,2))+...
+     2*H(LNODES(n,3)) 2*H(LNODES(n,1))+2*H(LNODES(n,2))+6*H(LNODES(n,3))];
  EL = eye(3,3);
  FL = eye(3,3);
        for i = 1 : 3 

@@ -8,10 +8,10 @@ dt = 0.01;
 M = tm/dt;
 
 du = 1;
-dv = 5;
+dv = 15;
 a = 0.1;
 b = 0.9;
-gam = 10.49;
+gam = 80.6;
 
 N = 50; 
 X = linspace(0,xmax,N+1);
@@ -98,7 +98,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
     
- StiffL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ StiffL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
@@ -206,17 +206,17 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-% trisurf(LNODES,x,y,V(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+trisurf(LNODES,x,y,V(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+xlim([0 xmax])
+ylim([0 xmax])
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
 

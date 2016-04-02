@@ -13,11 +13,11 @@ dt = 0.01;
 M = tm/dt;
 
 du = 1;
-dv = 5;
+dv = 10;
 a = 0.1;
 b = 0.9;
 %gam = 39.596;
-gam = 40.6;
+gam = 40.59;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.08+abs(0.45-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
@@ -89,7 +89,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
     
- StiffL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ StiffL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
