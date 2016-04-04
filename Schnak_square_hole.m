@@ -48,26 +48,27 @@ for i = 1 : NNODES
 end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
-% figure(1)
-% title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
-% subplot (2,2,1)
+figure(1)
+% subplot (1,2,1)
 % trisurf(LNODES,x,y,U(:,:))
 % colorbar
 % xlabel('x')
 % ylabel('y')
+% zlabel('u')
 % view(2)
 % legend('Initial u')
 % shading interp
 % axis equal tight
-% subplot(2,2,2)
-% trisurf(LNODES,x,y,V(:,:))
-% colorbar
-% xlabel('x')
-% ylabel('y')
-% view(2)
-% legend('Initial v')
-% shading interp
-% axis equal tight
+subplot(1,2,1)
+trisurf(LNODES,x,y,V(:,:))
+colorbar
+xlabel('x')
+ylabel('y')
+zlabel('v')
+title('Initial concentration of v','fontsize',8)
+view(2)
+shading interp
+axis equal tight
 
 
 
@@ -158,17 +159,17 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
        
 end
 
-
-for i = 1 : NNODES
-    if (abs(fd(p(i,:)))<=1e-8 )
-        RHSU(i) = 0;
-        RHSV(i) = 0;
-        TMatrixU(i,:) = 0;
-        TMatrixV(i,:) = 0;
-        TMatrixU(i,i) = 1;
-        TMatrixV(i,i) = 1;
-    end
-end
+% 
+% for i = 1 : NNODES
+%     if (abs(fd(p(i,:)))<=1e-8 )
+%         RHSU(i) = 0;
+%         RHSV(i) = 0;
+%         TMatrixU(i,:) = 0;
+%         TMatrixV(i,:) = 0;
+%         TMatrixU(i,i) = 1;
+%         TMatrixV(i,i) = 1;
+%     end
+% end
 
 
  TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
@@ -193,30 +194,25 @@ for j = 1:M+1
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
-     figure(1)
-%     
-% subplot(1,2,1)
+    
+% subplot(2,2,3)
 % trisurf(LNODES,x,y,U(:,:))
 % colorbar
 % shading interp
 % xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
 % view(2)
 % ylabel('y','fontsize',16)
 % zlabel('u & v','fontsize',16)
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-% subplot(1,2,2)
+subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
 colorbar
 shading interp
-xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
+xlabel('x') 
 view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
+ylabel('y')
+zlabel('v')
 title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % %MV(j)=getframe(gcf);

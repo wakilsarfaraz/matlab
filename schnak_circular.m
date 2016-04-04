@@ -5,15 +5,15 @@ clear all;
 %addpath distmesh
 
 
-tm = 5;
-dt = 0.05;
+tm = 1;
+dt = 0.01;
 M = tm/dt;
 
 du = 10;
-dv = 4.1;
+dv = 8;
 a = 0.1;
 b = 0.9;
-gamma = 37.5;
+gamma = 38;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
@@ -72,8 +72,8 @@ vi = [min(V) max(V)]
 
 SPSM = sparse(NNODES, NNODES);
 SPMM = sparse(NNODES, NNODES);
-SPC = sparse(NNODES,NNODES);
-SPD =sparse (NNODES,NNODES);
+SPC  = sparse (NNODES,NNODES);
+SPD  = sparse (NNODES,NNODES);
 
 UG = zeros(NNODES,1);
 VG = zeros(NNODES,1);
@@ -87,7 +87,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [r2(1)-r1(1) r2(2)-r1(2); r3(1)-r1(1) r3(2)-r1(2)]; 
     
- StiffL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ StiffL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        

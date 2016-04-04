@@ -11,12 +11,12 @@ xmax = 1;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
+% 
+% Dh = 0.01;
+% Dp = 0.025;
 
-Dh = 0.01;
-Dp = 0.025;
-
-% Dh = 5000;
-% Dp = 1000;
+Dh = 12;
+Dp = 5;
 
 a1 = 1.2;
 a2 = 0.3;
@@ -67,18 +67,18 @@ for i = 1 : NNODES
         P(i) = P(i)+0.0001*pi^2*sin(15*pi*x(i))*cos(15*pi*y(i));
     end
 end
-figure(1)
-subplot(1,2,1)
-trisurf(LNODES,x,y,H(:,:))
-colorbar
-shading interp
-view(2)
-axis equal tight
-subplot(1,2,2)
-trisurf(LNODES,x,y,P(:,:))
-shading interp
-view(2)
-axis equal tight
+% figure(1)
+% subplot(1,2,1)
+% trisurf(LNODES,x,y,H(:,:))
+% colorbar
+% shading interp
+% view(2)
+% axis equal tight
+% subplot(1,2,2)
+% trisurf(LNODES,x,y,P(:,:))
+% shading interp
+% view(2)
+% axis equal tight
 
 MG = sparse(NNODES,NNODES);
 SG = sparse(NNODES,NNODES);
@@ -95,7 +95,7 @@ for n = 1: NTRI
     r3 = [x(LNODES(n,3)) y(LNODES(n,3))];
     J = [1 1 1; r1(1) r2(1) r3(1); r1(2) r2(2) r3(2)]; 
     
- SL = (1/(4*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
+ SL = (1/(2*det(J)))* [(r2-r3)*(r2-r3)' (r2-r3)*(r3-r1)' (r2-r3)*(r1-r2)';... 
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)'];      
  ML = det(J)*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
@@ -106,6 +106,13 @@ for n = 1: NTRI
      H(LNODES(n,1))+2*H(LNODES(n,2))+2*H(LNODES(n,3));2*H(LNODES(n,1))+...
      H(LNODES(n,2))+2*H(LNODES(n,3))  H(LNODES(n,1))+2*H(LNODES(n,2))+...
      2*H(LNODES(n,3)) 2*H(LNODES(n,1))+2*H(LNODES(n,2))+6*H(LNODES(n,3))];
+ 
+       ksi = [0 1/2]';
+       eta = [0 1/2]';
+       
+       xx = [(1-ksi(1)-eta(1))*r1(1)+ksi(1)*r2(1)+eta(1)*r3(1) (1-ksi(2)-eta(2))*r1(1)+ksi(2)*r2(1)+eta(2)*r3(1)]';
+       yy = [(1-ksi(1)-eta(1))*r1(2)+ksi(1)*r2(2)+eta(1)*r3(2) (1-ksi(2)-eta(2))*r1(2)+ksi(2)*r2(2)+eta(2)*r3(2)]';
+ 
  EL = eye(3,3);
  FL = det(J)/6*[(1/8*P(LNODES(n,1))+1/8*P(LNODES(n,3)))/(k2+1/2*H(LNODES(n,1))...
      +1/2*H(LNODES(n,3)))+(1/8*P(LNODES(n,1))+1/8*P(LNODES(n,2)))/(k2+1/2*H(LNODES(n,1))...
@@ -151,9 +158,10 @@ for j = 1 : M+1
     H = TH\RH;
     P = TP\RP;
     
-    figure(2)
+%     figure(2)
     subplot(1,2,1)
     trisurf(LNODES,x,y,H(:,:));
+    colorbar
     shading interp
     xlabel('x','fontsize',16) 
     xlim([0 xmax])
@@ -165,6 +173,7 @@ for j = 1 : M+1
     axis equal tight
     subplot(1,2,2)
     trisurf(LNODES,x,y,P(:,:));
+    colorbar
     shading interp
     xlabel('x','fontsize',16) 
     view(2)
