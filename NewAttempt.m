@@ -2,8 +2,8 @@
 % Wakil Sarfaraz with Help of Dr Kathryn Gillow. 22 May 2014 
 clear all;
 tic
-xmax =10;
-N = 100; %(Number of points on the x, y interval on which the equation is solved.
+xmax =1;
+N = 200; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -54,14 +54,14 @@ for n = 1: NTRI
        xx = (1-ksi-eta)*r1(1) + ksi* r2(1) + eta*r3(1); %This is x(ksi,eta) which is used for transformation.
        yy = (1-ksi-eta)*r1(2) + ksi* r2(2) + eta*r3(2); % This is y(ksi,eta) which is used for transformation.
        
-%        F(1) = (1-ksi-eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third
-%                                                                       %vertix of traingles
-%        F(2) = (ksi)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
-%        F(3) = (eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;
+       F(1) = (1-ksi-eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third
+                                                                      %vertix of traingles
+       F(2) = (ksi)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
+       F(3) = (eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;
        
-       F(1) = (1-ksi-eta)*det(J)*1/2;%| these will solve for laplace u =1 with zero dirichlet bcs.
-       F(2) = ksi* det(J)*1/2;
-       F(3) = eta* det(J)*1/2;
+%        F(1) = (1-ksi-eta)*det(J)*1/2;%| these will solve for laplace u =1 with zero dirichlet bcs.
+%        F(2) = ksi* det(J)*1/2;
+%        F(3) = eta* det(J)*1/2;
        for i = 1 : 3
          
            LV(LNODES(n,i)) = LV(LNODES(n,i))+ F(i); % This assigns all the newly computed values to the Load vector.
@@ -71,61 +71,12 @@ for n = 1: NTRI
      
 end
 for i = 1: NNODES
-%     if (x(i)==xmax/2) % This enforces boundary conditions.
-%         LV(i) = 0;
-%         SP(i,:) = 0;
-%         SP(i,i) =1 ;
-     if (y(i)==0)
-        LV(i) = 1;
+    if (x(i)==0 || y(i)==0 || x(i)==xmax || y(i)==xmax)
+
+        LV(i) = 0;
         SP(i,:) = 0;
         SP(i,i) =1 ;
-    else if (y(i)==xmax)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) =1 ;
-    else if (y(i)==xmax/4)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (x(i)==xmax/4)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (y(i)==xmax/2)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (x(i)==xmax/2)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (y(i)==3*xmax/4)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (x(i)==3*xmax/4)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    
-    else if (x(i)==0)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-    else if (x(i)==xmax)
-        LV(i) = 1;
-        SP(i,:) = 0;
-        SP(i,i) = 1;
-        end
-        end
-        end   
-        end
-        end
-        end 
-        end
-        end
-        end
-       
+
     end
 end
 
@@ -146,7 +97,7 @@ ylabel('y')
 zlabel('u(x,y)')
 title('Exact Solution')
 shading interp
-view(2)
+
 subplot(1,2,2)
 %figure(2)
 trisurf(LNODES,x,y,U)
@@ -155,7 +106,6 @@ ylabel('y')
 zlabel('u(x,y)')
 title('Numerical Solution')
 shading interp
-view(2)
 D = abs(U-u);
 
 
