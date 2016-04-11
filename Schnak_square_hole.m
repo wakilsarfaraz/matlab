@@ -49,17 +49,17 @@ end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
 figure(1)
-% subplot (1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% xlabel('x')
-% ylabel('y')
-% zlabel('u')
-% view(2)
-% legend('Initial u')
-% shading interp
-% axis equal tight
-subplot(1,2,1)
+subplot (2,2,1)
+trisurf(LNODES,x,y,U(:,:))
+colorbar
+xlabel('x')
+ylabel('y')
+zlabel('u')
+view(2)
+legend('Initial u')
+shading interp
+axis equal tight
+subplot(2,2,2)
 trisurf(LNODES,x,y,V(:,:))
 colorbar
 xlabel('x')
@@ -195,17 +195,17 @@ for j = 1:M+1
     V = TMatrixV\RHSV;
     
     
-% subplot(2,2,3)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
-subplot(1,2,2)
+subplot(2,2,3)
+trisurf(LNODES,x,y,U(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
+subplot(2,2,4)
 trisurf(LNODES,x,y,V(:,:))
 colorbar
 shading interp

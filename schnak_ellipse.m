@@ -5,7 +5,7 @@ clear all;
 %addpath distmesh
 
 
-tm = 1.2;
+tm = 1;
 dt = 0.05;
 M = tm/dt;
 

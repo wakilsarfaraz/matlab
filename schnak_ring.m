@@ -12,7 +12,7 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 1;
+du = 0.6;
 dv = 5;
 a = 0.1;
 b = 0.9;
@@ -185,25 +185,21 @@ for j = 1:M+1
     
     %figure(1)
     
-%subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
-% subplot(1,2,2)
+subplot(1,2,1)
+trisurf(LNODES,x,y,U(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
+subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
-% xlim([0 xmax])
-% ylim([0 xmax])
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
