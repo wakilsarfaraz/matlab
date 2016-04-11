@@ -7,11 +7,11 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 1;
+du = 20;
 dv = 15;
 a = 0.1;
 b = 0.9;
-gam = 80.6;
+gam = 86;
 
 N = 50; 
 X = linspace(0,xmax,N+1);
@@ -212,7 +212,7 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,abs(V(:,:)))
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
@@ -250,17 +250,17 @@ end
 %  subplot(2,2,4)
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
 %  %trisurf(LNODES,x,y,1/max(U)*U(:,:))
- trisurf(LNODES,x,y,V(:,:))
- colorbar 
- xlim([0 xmax])
- ylim([0 xmax])
- xlabel('x')
- ylabel('y')
- view(2)
+%  trisurf(LNODES,x,y,V(:,:))
+%  colorbar 
+%  xlim([0 xmax])
+%  ylim([0 xmax])
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
  %title ('Pattern formed by v')
- legend('Evolved pattern of v')
- shading interp
- axis equal tight
+%  legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
 uf = [min(U) max(U)]
 vf = [min(V) max(V)]

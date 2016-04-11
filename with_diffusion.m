@@ -4,9 +4,9 @@ clear all;
 tic
 xmax = 1;
 tm = 1;
-dt = 0.01;
+dt = 0.0001;
 M = tm/dt;
-N = 20; 
+N = 50; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -55,10 +55,10 @@ end
 TMatrix =  (dt*SP+SPM);
 for i = 1: NNODES
     if (x(i)==xmax && y(i)>=0 && y(i) <= xmax)  
-%         LV(i) = 0;
-%         TMatrix(i,:) = 0;
-%         SPM(i,:) = 0;
-%         TMatrix(i,i) =1 ;
+        LV(i) = 0;
+        TMatrix(i,:) = 0;
+        SPM(i,:) = 0;
+        TMatrix(i,i) =1 ;
  
     elseif (x(i)==0 && y(i)>=0 && y(i) <= xmax)  
         LV(i) = 0;
@@ -82,7 +82,7 @@ for j = 1:M+1
     RHS = SPM*Q+LV;
     Q = TMatrix\RHS;
     trisurf(LNODES,x,y,Q(:,:))
-%shading interp
+shading interp
 xlabel('x','fontsize',16) 
 xlim([0 xmax])
 ylim([0 xmax])

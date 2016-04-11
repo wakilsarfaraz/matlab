@@ -9,11 +9,11 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 10;
-dv = 11;
+du = 5;
+dv = 10.9;
 a = 0.1;
 b = 0.9;
-gamma = 38;
+gamma = 40;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
@@ -131,8 +131,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
     U(LNODES(n,1))*U(LNODES(n,2)))];
     
  
- UL = a*det(J)*[1/6;1/6;1/6];
- VL = b*det(J)*[1/6;1/6;1/6];
+ UL = det(J)*[1/6;1/6;1/6];
+ VL = det(J)*[1/6;1/6;1/6];
    
    
    
@@ -158,7 +158,7 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;% TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
 
 
@@ -179,26 +179,24 @@ end
 for j = 1:M+1
 
 
-    RHSU = SPMM*U+dt*gamma*UG;
-    RHSV = SPMM*V+dt*gamma*VG;
+    RHSU = SPMM*U+dt*gamma*a*UG;
+    RHSV = SPMM*V+dt*gamma*b*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
 %     figure(1)
 %     
-% subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% % xlim([0 xmax])
-% % ylim([0 xmax])
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
-% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
-% subplot(1,2,2)
+subplot(1,2,1)
+trisurf(LNODES,x,y,U(:,:))
+colorbar
+shading interp
+xlabel('x','fontsize',16) 
+view(2)
+ylabel('y','fontsize',16)
+zlabel('u & v','fontsize',16)
+title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+axis equal tight
+subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
 colorbar
 shading interp

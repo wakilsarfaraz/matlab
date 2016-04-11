@@ -12,11 +12,11 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.6;
+du = 0.1;
 dv = 5;
 a = 0.1;
 b = 0.9;
-%gam = 39.596;
+% gam = 39.596;
 gam = 40.59;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.08+abs(0.45-sqrt(sum(p.^2,2)))');
@@ -158,7 +158,7 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
     
        
 end
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM+dt*gam*SPC;% (original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
 for i = 1 : NNODES
     if (abs(fd(p(i,:)))<=1e-8 )
