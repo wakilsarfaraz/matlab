@@ -9,7 +9,7 @@ tm = 2;
 dt = 0.05;
 M = tm/dt;
 
-du = 10;
+du = 0.1;
 dv = 4.5;
 a = 0.1;
 b = 0.9;
@@ -172,7 +172,7 @@ end
 % end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%original TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
  
  for i = 1 : NNODES
