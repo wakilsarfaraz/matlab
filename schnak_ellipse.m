@@ -159,8 +159,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
 
 
 for i = 1 : NNODES

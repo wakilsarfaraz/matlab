@@ -7,11 +7,12 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.6;
-dv = 8;
-a = 0.1;
-b = 0.9;
-gam = 86;
+du = 0.01;
+dv = 4;
+d = 0;
+a = 0.4;
+b = 0.4;
+gam = 300;
 
 N = 50; 
 X = linspace(0,xmax,N+1);
@@ -50,10 +51,10 @@ for i = 1 : NNODES
         U(i) = 0;
         V(i) = 0;
     else
-    U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-    V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+    U(i) = a + b + 0.001*exp(-100*(abs(x(i)-0.5)^2+(y(i)-1/3)^2));
+    %V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
   
-    %V(i) = b/(a+b)^2; 
+    V(i) = b/(a+b)^2; 
     end
 end
 ui = [min(U) max(U)]
@@ -148,8 +149,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
     U(LNODES(n,1))*U(LNODES(n,2)))];
     
  
- UL = a*det(J)*[1/6;1/6;1/6];
- VL = b*det(J)*[1/6;1/6;1/6];
+ UL = det(J)*[1/6;1/6;1/6];
+ VL = det(J)*[1/6;1/6;1/6];
    
    
    
@@ -175,34 +176,44 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM+0*dt*SPSM+gam*dt*SPMM-gam*dt*SPC;
+ TMatrixV =  SPMM+dt*d*SPSM+gam*dt*SPD;
 
 for i = 1: NNODES
-    if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+    if (x(i)==0  || x(i)==xmax || y(i)==0 || y(i)==xmax )
         RHSU(i) = 0;
         RHSV(i) = 0;
         TMatrixU(i,:) = 0;
         TMatrixV(i,:) = 0;
+        SPMM(i,:) = 0;
+        SPC(i,:) = 0;
+        SPD(i,:) = 0;
         TMatrixU(i,i) = 1;
         TMatrixV(i,i) = 1;
+
     end
 
 end
 
+
+
 for j = 1:M+1
 
-    RHSU = SPMM*U+dt*gam*UG;
-    RHSV = SPMM*V+dt*gam*VG;
+ 
+
+    
+
+    RHSU = SPMM*U+a*gam*dt*UG;
+    RHSV = SPMM*V+b*gam*dt*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
    % figure(1)
     
-subplot(1,2,1)
+%subplot(1,2,1)
 trisurf(LNODES,x,y,U(:,:))
-colorbar
-shading interp
+%colorbar
+%shading interp
 xlabel('x','fontsize',16) 
 xlim([0 xmax])
 ylim([0 xmax])
@@ -211,18 +222,18 @@ ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
 title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
-subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
+% subplot(1,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
 
@@ -266,10 +277,4 @@ uf = [min(U) max(U)]
 vf = [min(V) max(V)]
 
 hold off
- 
- 
- 
- 
- 
- 
  
