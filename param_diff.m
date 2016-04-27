@@ -4,7 +4,7 @@
 clear all;
 tic
 xmax =1;
-N = 100; %(Number of points on the x, y interval on which the equation is solved.
+N = 500; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -33,8 +33,8 @@ for i = 1:N
 end
 
 
-M = 10;
-dmax = 1;
+M = 50;
+dmax = 100;
 D = linspace(0,dmax,M-1);
 
 for n = 1 : 2
@@ -55,8 +55,9 @@ for i = 1: NNODES
 end
 
 figure(1)
+subplot(2,2,1)
 plot(Ru(:,1),Ru(:,2),'.','Color','g')
-title(['Complex Root n=',num2str(n),' and d=',num2str(D(k))])
+title(['Complex Root n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5)
 xlabel('alpha')
 ylabel('beta')
 
@@ -80,9 +81,10 @@ for i = 1: NNODES
     end
     
 end
-figure(2)
+%figure(2)
+subplot(2,2,2)
 plot(Rg1(:,1),Rg1(:,2),'.','Color','r')
-title(['Neg real roots for n=',num2str(n),' and d=',num2str(D(k))] )
+title(['Neg real roots for n=',num2str(n),' and d=',num2str(D(k))], 'fontsize',5)
 xlabel('alpha')
 ylabel('beta')
 
@@ -100,9 +102,10 @@ ylabel('beta')
     end
     
 end
-figure(3)
+%figure(3)
+subplot(2,2,3)
 plot(Rg2(:,1),Rg2(:,2),'.','Color','b')
-title(['Roots with different signs for n=',num2str(n),' and d=',num2str(D(k))] )
+title(['Roots with different signs for n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5 )
 xlabel('alpha')
 ylabel('beta')
 
@@ -117,9 +120,10 @@ ylabel('beta')
     end
     
 end
-figure(4)
+%figure(4)
+subplot(2,2,4)
 plot(Rg3(:,1),Rg2(:,2),'.','Color','m')
-title(['Repeated roots with n=',num2str(n),' and d=',num2str(D(k))] )
+title(['Repeated roots with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5 )
 xlabel('alpha')
 ylabel('beta')
 
