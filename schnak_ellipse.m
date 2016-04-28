@@ -9,7 +9,7 @@ tm = 1;
 dt = 0.05;
 M = tm/dt;
 
-du = 2.35;
+du = 0.8;
 dv = 2;
 a = 0.1;
 b = 0.9;
@@ -159,14 +159,14 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
 
 
 for i = 1 : NNODES
-    if (abs(fd(p(i,:)))<=1e-10 )
-        RHSU(i) = 0;
-        RHSV(i) = 0;
+    if (abs(fd(p(i,:)))<=1e-15 )
+        RHSU(i) = 1;
+        RHSV(i) = 1;
         TMatrixU(i,:) = 0;
         TMatrixV(i,:) = 0;
         TMatrixU(i,i) = 1;

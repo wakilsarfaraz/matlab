@@ -4,13 +4,13 @@ clear all;
 
 %addpath distmesh
 xmax = 1;
-N = 50;
+N = 40;
 tm = 2;
-dt = 0.05;
+dt = 0.01;
 M = tm/dt;
 
-du = 0.1;
-dv = 4.5;
+du = 1;
+dv = 50;
 a = 0.1;
 b = 0.9;
 gam = 36;
@@ -159,7 +159,7 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
        
 end
 
-% 
+
 % for i = 1 : NNODES
 %     if (abs(fd(p(i,:)))<=1e-8 )
 %         RHSU(i) = 0;
@@ -172,8 +172,8 @@ end
 % end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%original TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%original TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
  
  for i = 1 : NNODES
     if (abs(fd(p(i,:)))<=1e-8 )

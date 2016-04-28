@@ -9,11 +9,11 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 5;
+du = 1;
 dv = 10.9;
-a = 0.1;
-b = 0.9;
-gamma = 40.04;
+a = 0.9;
+b = 1.5;
+gamma = 40.045;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
@@ -159,7 +159,7 @@ end
 
 
  TMatrixU =  SPMM+dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;% TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
- TMatrixV =  SPMM+dt*dv*SPSM+gamma*SPD;
+ TMatrixV =  SPMM-dt*dv*SPSM+gamma*SPD;
 
 
 for i = 1 : NNODES

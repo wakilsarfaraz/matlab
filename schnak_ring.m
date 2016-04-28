@@ -8,11 +8,11 @@ addpath distmesh
 N = 50;
 xmax = 1;
 
-tm = 1;
+tm = 2;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.1;
+du = 0.01;
 dv = 5;
 a = 0.1;
 b = 0.9;
