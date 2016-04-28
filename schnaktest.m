@@ -7,11 +7,11 @@ tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.6;
+du = 0.1;
 dv = 8;
 a = 0.1;
 b = 0.9;
-gam = 86;
+gam = 85.7;
 
 N = 50; 
 X = linspace(0,xmax,N+1);
@@ -175,7 +175,7 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
  TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
 
 for i = 1: NNODES
@@ -212,7 +212,7 @@ zlabel('u & v','fontsize',16)
 title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,V(:,:)+0.02)
 colorbar
 shading interp
 xlabel('x','fontsize',16) 
@@ -263,7 +263,7 @@ end
 %  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
 uf = [min(U) max(U)]
-vf = [min(V) max(V)]
+vf = [min(V)+0.04 max(V)]
 
 hold off
  
