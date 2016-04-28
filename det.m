@@ -33,19 +33,22 @@ for i = 1:N
 end
 
 
-M = 100;
-dmax = 100;
+M = 20;
+dmax = 1.5;
 D = linspace(0,dmax,M-1);
 
-for n = 1: 1
+for n = 1: 10
     for k = 1: length(D)
-        d = D(k)
-A = (x+y).^2-2*(x.^2-y.^2);
-limitu =[min(A) max(A)]
+        d = D(k);
+%A = (x+y).^2-2*(x.^2-y.^2);
+Tr = (y-x)./(y+x)-(x+y).^2-2*n^2*pi^2*(d+1);
+De = ((y-x)./(y+x)-2*n^2*pi^2).*(-(x+y).^2-2*d*n^2*pi^2)+2*y.*(x+y);
+Dcr = Tr.^2-4*De;
+
 Ru = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (A(LNODES(i,j)) > 0)
+    if (Dcr(LNODES(i,j)) >= 0)
         Ru(i,1) = x(LNODES(i,j));
         Ru(i,2) = y(LNODES(i,j));
     end
@@ -55,18 +58,20 @@ for i = 1: NNODES
 
 end
 figure(1)
-subplot(2,2,1)
+subplot(1,2,1)
 plot(Ru(:,1),Ru(:,2),'.','Color','g')
-title(['A is positive with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6)
+title(['Two real roots n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6)
 xlabel('alpha')
 ylabel('beta')
-
-B = 2*n^2*pi^2*(d*(y-x)-(x+y).^3)./(y+x);
- limitg =[min(B) max(B)]
+ subplot(1,2,2)
+ trisurf(LNODES,x,y,Dcr)
+ title('Discriminant Plane')
+ shading interp
+ 
 Rg1 = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (B(LNODES(i,j)) > 0)
+    if (Tr(LNODES(i,j)) > 0)
         Rg1(i,1) = x(LNODES(i,j));
         Rg1(i,2) = y(LNODES(i,j));
     end
@@ -74,36 +79,79 @@ for i = 1: NNODES
     end
     
 end
-%figure(2)
-subplot(2,2,2)
+figure(2)
+subplot(1,2,1)
 plot(Rg1(:,1),Rg1(:,2),'.','Color','r')
-title(['Necessary for instability with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6 )
+title(['Trace positive n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6 )
 xlabel('alpha')
 ylabel('beta')
-
+ subplot(1,2,2)
+ trisurf(LNODES,x,y,Tr)
+ shading interp
+ title('Trace Plane')
 
 Rg2 = zeros(NNODES,2);
 for i = 1 : NNODES
     for j = 1 : 3
-        if (abs(B(LNODES(i,j))) > abs(A(LNODES(i,j)))+4*n^4*pi^4)
+        if (Tr(LNODES(i,j))<0 && Dcr(LNODES(i,j))>0 && abs(sqrt(Dcr(LNODES(i,j))))>Tr(LNODES(i,j)))
             Rg2(i,1) = x(LNODES(i,j));
             Rg2(i,2) = y(LNODES(i,j));
         end
     end
 end
-%figure(3)
-subplot(2,2,3)
+figure(3)
+subplot(1,2,1)
 plot(Rg2(:,1),Rg2(:,2),'.','Color','b')
 title(['Sufficient for instability with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6 )
 xlabel('alpha')
 ylabel('beta')
-
-subplot(2,2,4)
-trisurf(LNODES,x,y,A)
-shading interp
-title('B plane','fontsize',6)
+ subplot(1,2,2)
+ trisurf(LNODES,x,y,sqrt(abs(Dcr))-abs(Tr))
+ title('sqrt(Discriminant)-Trace')
+ shading interp
+ 
+ Rg3 = zeros(NNODES,2);
+for i = 1 : NNODES
+    for j = 1 : 3
+        if (De(LNODES(i,j))>0)
+            Rg3(i,1) = x(LNODES(i,j));
+            Rg3(i,2) = y(LNODES(i,j));
+        end
+    end
+end
+figure(4)
+subplot(1,2,1)
+plot(Rg3(:,1),Rg3(:,2),'.','Color','m')
+title(['Determinant positive with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',6 )
+xlabel('alpha')
+ylabel('beta')
+ subplot(1,2,2)
+ trisurf(LNODES,x,y,De)
+ title('Determinant Plane')
+ shading interp
 
 pause(1e-1)
     end
 
     end
+ limiTr =[min(Tr) max(Tr)]
+ limidet =[min(De) max(De)]
+ 
+ 
+%   figure(2)
+%  subplot(2,2,1)
+%  trisurf(LNODES,x,y,Dcr)
+%  title('Discriminant')
+%  shading interp
+% 
+%  subplot(2,2,2)
+%  trisurf(LNODES,x,y,Tr)
+%  shading interp
+%  title('Trace')
+%  
+%  subplot(2,2,3)
+%  trisurf(LNODES,x,y,De)
+%  shading interp
+%  title('Determinant')
+
+ 

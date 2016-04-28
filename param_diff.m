@@ -40,12 +40,12 @@ D = linspace(0,dmax,M-1);
 for n = 1 : 2
     for k = 1: length(D)
         d = D(k)
-u = (-(x+y).*(2*n^2*pi^2*(d+1)+(x+y).^2)-x+y)./(2*(x+y));
-limitu =[min(u) max(u)]
+Tr = (-(x+y).*(2*n^2*pi^2*(d+1)+(x+y).^2)-x+y)./(2*(x+y));
+limitu =[min(Tr) max(Tr)]
 Ru = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (u(LNODES(i,j)) < 0)
+    if (Tr(LNODES(i,j)) < 0)
         Ru(i,1) = x(LNODES(i,j));
         Ru(i,2) = y(LNODES(i,j));
     end
@@ -68,12 +68,12 @@ ylabel('beta')
 
 
  
-  g = sqrt((x+y).*(4*n^2*pi^2*(d-1)*(n^2*pi^2*(d-1)*(x+y)+(x+y).^3+x-y)+(x+y).*(x+y-1).^2)-4*x.*y);%./(2*(x+y));
- limitg =[min(g) max(g)]
+  De = 
+ limitg =[min(De) max(De)]
 Rg1 = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (g(LNODES(i,j)) < abs(u(LNODES(i,j))))
+    if (De(LNODES(i,j)) < abs(Tr(LNODES(i,j))))
         Rg1(i,1) = x(LNODES(i,j));
         Rg1(i,2) = y(LNODES(i,j));
     end
@@ -94,7 +94,7 @@ ylabel('beta')
  Rg2 = zeros(NNODES,2);
  for i = 1: NNODES
     for j = 1 : 3
-    if (g(LNODES(i,j)) > abs(u(LNODES(i,j))))
+    if (De(LNODES(i,j)) > abs(Tr(LNODES(i,j))))
         Rg2(i,1) = x(LNODES(i,j));
         Rg2(i,2) = y(LNODES(i,j));
     end
@@ -112,7 +112,7 @@ ylabel('beta')
  Rg3 = zeros(NNODES,2);
  for i = 1: NNODES
     for j = 1 : 3
-    if (g(LNODES(i,j)) == 0)
+    if (De(LNODES(i,j)) == 0)
         Rg3(i,1) = x(LNODES(i,j));
         Rg3(i,2) = y(LNODES(i,j));
     end
