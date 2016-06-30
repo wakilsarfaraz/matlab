@@ -2,13 +2,13 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 
-addpath distmesh
+%addpath distmesh
 %format long
 
 N = 50;
 xmax = 1;
 
-tm = 2;
+tm = 10;
 dt = 0.01;
 M = tm/dt;
 
@@ -173,7 +173,8 @@ end
 
 
 
-
+Tdiffu = zeros(1,length(T));
+Tdiffv = zeros(1,length(T));
 
 for j = 1:M+1
 
@@ -182,28 +183,29 @@ for j = 1:M+1
     RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
-    
+   Tdiffu(j) = sum((U(j+1)-U(j)).^2);
+    Tdiffv(j) = sum((V(j+1)-V(j)).^2);
     %figure(1)
     
-subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-subplot(1,2,2)
+%subplot(1,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+% subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
-colorbar
+%colorbar
 shading interp
 xlabel('x','fontsize',16) 
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+title(['Pattern formed by u'])%at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 %MV(j)=getframe(gcf);
 pause(1e-10) 
@@ -212,8 +214,18 @@ pause(1e-10)
 
 end
 
-
 % figure(2)
+% subplot(1,2,1)
+% plot(T,Tdiffu)
+% xlabel('Time')
+% ylabel('L2 Difference')
+% title('U')
+% subplot(1,2,2)
+% plot(T,Tdiffv)
+% title('V')
+% xlabel('Time')
+% ylabel('L2 Difference')
+% % figure(2)
 %  subplot(2,2,3)
 %  trisurf(LNODES,x,y,U(:,:))
 %  colorbar

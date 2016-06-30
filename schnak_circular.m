@@ -5,14 +5,14 @@ clear all;
 %addpath distmesh
 
 
-tm = 1;
+tm = 10;
 dt = 0.01;
 M = tm/dt;
 
 du = 1;
 dv = 10.9;
-a = 0.9;
-b = 1.5;
+a = 0.8;
+b = 1.4;
 gamma = 40.045;
 T = linspace(0, tm,M+1); 
 
@@ -164,8 +164,8 @@ end
 
 for i = 1 : NNODES
     if (abs(fd(p(i,:)))<=1e-8 )
-        RHSU(i) = 0;
-        RHSV(i) = 0;
+        RHSU(i) = 1;
+        RHSV(i) = 1;
         TMatrixU(i,:) = 0;
         TMatrixV(i,:) = 0;
         TMatrixU(i,i) = 1;
@@ -174,9 +174,12 @@ for i = 1 : NNODES
 end
 
 
-
+Tdiffu = zeros(1,length(T));
+Tdiffv = zeros(1,length(T));
 
 for j = 1:M+1
+
+
 
 
     RHSU = SPMM*U+dt*gamma*a*UG;
@@ -184,27 +187,29 @@ for j = 1:M+1
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
+   Tdiffu(j) = sum((U(j+1)-U(j)).^2);
+    Tdiffv(j) = sum((V(j+1)-V(j)).^2);
 %     figure(1)
 %     
-subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-subplot(1,2,2)
+% subplot(1,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% %colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+% subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
-colorbar
+%colorbar
 shading interp
 xlabel('x','fontsize',16) 
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+title(['Pattern formed by u'])% at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 
@@ -212,8 +217,17 @@ axis equal tight
 
 
 end
-
-
+% figure(2)
+% subplot(1,2,1)
+% plot(T,Tdiffu)
+% xlabel('Time')
+% ylabel('L2 Difference')
+% title('U')
+% subplot(1,2,2)
+% plot(T,Tdiffv)
+% title('V')
+% xlabel('Time')
+% ylabel('L2 Difference')
 %figure(2)
 % subplot(2,2,3)
 %  trisurf(LNODES,x,y,1/max(U)*U(:,:))

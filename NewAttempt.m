@@ -3,7 +3,7 @@
 clear all;
 tic
 xmax =1;
-N = 200; %(Number of points on the x, y interval on which the equation is solved.
+N = 50; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -58,7 +58,11 @@ for n = 1: NTRI
                                                                       %vertix of traingles
        F(2) = (ksi)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
        F(3) = (eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;
-       
+
+%        F(1) = (1-ksi-eta)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third
+%                                                                          %vertix of traingles
+%        F(2) = (ksi)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
+%        F(3) = (eta)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2;
 %        F(1) = (1-ksi-eta)*det(J)*1/2;%| these will solve for laplace u =1 with zero dirichlet bcs.
 %        F(2) = ksi* det(J)*1/2;
 %        F(3) = eta* det(J)*1/2;
@@ -80,14 +84,17 @@ for i = 1: NNODES
     end
 end
 
+
+
 U = SP\LV; %Solves the linear system.
 toc
 
-u = sin(pi*x).*sin(2*pi*y);
+ u = sin(pi*x).*sin(2*pi*y);
+
+%  u = (cos(pi*x).*cos(2*pi*y));
 
 
-
-
+figure(1)
 
 subplot(1,2,1)
 %figure(1)
@@ -103,15 +110,19 @@ subplot(1,2,2)
 trisurf(LNODES,x,y,U)
 xlabel('x') 
 ylabel('y')
-zlabel('u(x,y)')
+zlabel('U(x,y)')
 title('Numerical Solution')
 shading interp
 D = abs(U-u);
+C = u-U;
 
 
  Error = sum(D.^2)
-    
-
+ 
+ 
+ figure(2)
+trisurf(LNODES,x,y,D)
+shading interp
 
 
   

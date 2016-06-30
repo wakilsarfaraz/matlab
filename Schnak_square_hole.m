@@ -5,7 +5,7 @@ clear all;
 %addpath distmesh
 xmax = 1;
 N = 40;
-tm = 2;
+tm = 1;
 dt = 0.01;
 M = tm/dt;
 
@@ -48,27 +48,27 @@ for i = 1 : NNODES
 end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
-figure(1)
-subplot (2,2,1)
-trisurf(LNODES,x,y,U(:,:))
-colorbar
-xlabel('x')
-ylabel('y')
-zlabel('u')
-view(2)
-legend('Initial u')
-shading interp
-axis equal tight
-subplot(2,2,2)
-trisurf(LNODES,x,y,V(:,:))
-colorbar
-xlabel('x')
-ylabel('y')
-zlabel('v')
-title('Initial concentration of v','fontsize',8)
-view(2)
-shading interp
-axis equal tight
+% figure(1)
+% subplot (2,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% colorbar
+% xlabel('x')
+% ylabel('y')
+% zlabel('u')
+% view(2)
+% legend('Initial u')
+% shading interp
+% axis equal tight
+% subplot(2,2,2)
+% trisurf(LNODES,x,y,V(:,:))
+% colorbar
+% xlabel('x')
+% ylabel('y')
+% zlabel('v')
+% title('Initial concentration of v','fontsize',8)
+% view(2)
+% shading interp
+% axis equal tight
 
 
 
@@ -185,7 +185,8 @@ end
         TMatrixV(i,i) = 1;
     end
 end
-
+Tdiffu = zeros(1,length(T));
+Tdiffv = zeros(1,length(T));
 for j = 1:M+1
 
 
@@ -193,27 +194,28 @@ for j = 1:M+1
     RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
+    Tdiffu(j) = sum((U(j+1)-U(j)).^2);
+    Tdiffv(j) = sum((V(j+1)-V(j)).^2);  
     
-    
-subplot(2,2,3)
-trisurf(LNODES,x,y,U(:,:))
-colorbar
-shading interp
-xlabel('x','fontsize',16) 
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-subplot(2,2,4)
+% subplot(1,2,1)
+% trisurf(LNODES,x,y,U(:,:))
+% %colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+% subplot(1,2,2)
 trisurf(LNODES,x,y,V(:,:))
-colorbar
+%colorbar
 shading interp
 xlabel('x') 
 view(2)
 ylabel('y')
 zlabel('v')
-title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+title(['Pattern formed by u'])% t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 
@@ -221,7 +223,17 @@ axis equal tight
 
 
 end
-
+% figure(2)
+% subplot(1,2,1)
+% plot(T,Tdiffu)
+% xlabel('Time')
+% ylabel('L2 Difference')
+% title('U')
+% subplot(1,2,2)
+% plot(T,Tdiffv)
+% title('V')
+% xlabel('Time')
+% ylabel('L2 Difference')
 
 %figure(2)
 % subplot(1,2,1)

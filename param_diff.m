@@ -1,10 +1,10 @@
-% This script simulates the parameter space for reaction diffusion system
-% with Schnakneberg Model.
-% Author Wakil Sarfaraz 27/04/2016
+% This script simulates the parameter space for reaction system without
+% diffusion with Schnakneberg Model.
+% Author Wakil Sarfaraz 25/04/2016
 clear all;
 tic
-xmax =1;
-N = 500; %(Number of points on the x, y interval on which the equation is solved.
+xmax =3;
+N = 3000; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -33,19 +33,34 @@ for i = 1:N
 end
 
 
-M = 50;
-dmax = 100;
-D = linspace(0,dmax,M-1);
+m = 1;
+n = 1;
+L=15;
+% T = (-(x+y).^3-x+y)./(x+y)-((d+1)*(n^2+m^2)*pi^2)/xmax^2;
+% D = ((y-x)./(y+x)-((n^2+m^2)*pi^2)/xmax^2).*(-(y+x).^2-(d+1)*((n^2+m^2)*pi^2)/xmax^2)+2*y.*(y+x);
+% Dcr = T.^2-4*D;
+% img = sqrt(Dcr);
 
-for n = 1 : 2
-    for k = 1: length(D)
-        d = D(k)
-Tr = (-(x+y).*(2*n^2*pi^2*(d+1)+(x+y).^2)-x+y)./(2*(x+y));
-limitu =[min(Tr) max(Tr)]
+
+
+
+% 
+% M = 100;
+% dmax = 500;
+% Diff = linspace(1,dmax,M+1);
+%     for k = 1: length(Diff)
+%         d = Diff(k);
+d =2;
+T = (-(x+y).^3-x+y)./(x+y)-((d+1)*(n^2+m^2)*pi^2)/L^2;
+D = ((y-x)./(y+x)-((n^2+m^2)*pi^2)/L^2).*(-(y+x).^2-(d+1)*((n^2+m^2)*pi^2)/L^2)+2*y.*(y+x);
+Dcr = T.^2-4*D;
+img = sqrt(Dcr);
+
 Ru = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (Tr(LNODES(i,j)) < 0)
+%     if (T(LNODES(i,j))<=1e-3 && T(LNODES(i,j))>=-1e-3)
+if (Dcr(LNODES(i,j))>0 && img(LNODES(i,j))+T(LNODES(i,j))>0 )
         Ru(i,1) = x(LNODES(i,j));
         Ru(i,2) = y(LNODES(i,j));
     end
@@ -53,88 +68,71 @@ for i = 1: NNODES
     end
     
 end
-
-figure(1)
-subplot(2,2,1)
-plot(Ru(:,1),Ru(:,2),'.','Color','g')
-title(['Complex Root n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5)
-xlabel('alpha')
-ylabel('beta')
-
-
-
-
-
-
-
- 
-  De = 
- limitg =[min(De) max(De)]
-Rg1 = zeros(NNODES, 2);
-for i = 1: NNODES
-    for j = 1 : 3
-    if (De(LNODES(i,j)) < abs(Tr(LNODES(i,j))))
-        Rg1(i,1) = x(LNODES(i,j));
-        Rg1(i,2) = y(LNODES(i,j));
-    end
-  
-    end
-    
-end
-%figure(2)
-subplot(2,2,2)
-plot(Rg1(:,1),Rg1(:,2),'.','Color','r')
-title(['Neg real roots for n=',num2str(n),' and d=',num2str(D(k))], 'fontsize',5)
-xlabel('alpha')
-ylabel('beta')
-
-
-
-
- Rg2 = zeros(NNODES,2);
- for i = 1: NNODES
-    for j = 1 : 3
-    if (De(LNODES(i,j)) > abs(Tr(LNODES(i,j))))
-        Rg2(i,1) = x(LNODES(i,j));
-        Rg2(i,2) = y(LNODES(i,j));
-    end
-  
-    end
-    
-end
-%figure(3)
-subplot(2,2,3)
-plot(Rg2(:,1),Rg2(:,2),'.','Color','b')
-title(['Roots with different signs for n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5 )
-xlabel('alpha')
-ylabel('beta')
-
- Rg3 = zeros(NNODES,2);
- for i = 1: NNODES
-    for j = 1 : 3
-    if (De(LNODES(i,j)) == 0)
-        Rg3(i,1) = x(LNODES(i,j));
-        Rg3(i,2) = y(LNODES(i,j));
-    end
-  
-    end
-    
-end
-%figure(4)
-subplot(2,2,4)
-plot(Rg3(:,1),Rg2(:,2),'.','Color','m')
-title(['Repeated roots with n=',num2str(n),' and d=',num2str(D(k))],'fontsize',5 )
-xlabel('alpha')
-ylabel('beta')
-
-
-% figure(5)
-% trisurf(LNODES,x,y,u)
-% shading interp
 % 
-% figure(6)
-% trisurf(LNODES,x,y,g)
-% shading interp
-pause(1e-5)
-    end
-end
+% 
+% % 
+% figure(1)
+%subplot(2,2,1)
+ plot(Ru(:,1),Ru(:,2),'.','Color','y')
+% hold on
+% text(0.0001,0.2,'Unstable in absence of diffusion, d=0','fontsize',10)
+%  text(0.11,0.65,'A','fontsize',12)
+%  text(0.09,0.65,'B','fontsize',12)
+%  text(0.07,0.65,'C','fontsize',12)
+%  text(0.05,0.65,'D','fontsize',12)
+%  text(0.02,0.65,'E ','fontsize',12)
+% text(0.06,0.55,'\leftarrow F','fontsize',13)
+% text(0.001,0.675,'G','fontsize',13)
+% % legend('d=1.5')
+title('Unstable region for real \lambda','fontsize',14)
+% title(['Unstable region with d=',num2str(Diff(k))],'fontsize',6)
+xlabel('\alpha','fontsize',18)
+ylabel('\beta','fontsize',18)
+set(findobj('type','legend'),'fontsize',8)
+set(findobj('type','axes'),'fontsize',16)
+% 
+% xlim([0 0.15])
+%  ylim([0 0.7])
+% hold on
+
+% Ru1 = zeros(NNODES, 2);
+% Ru1 = zeros(NNODES, 2);
+% for i = 1: NNODES
+%     for j = 1 : 3
+%     if (T(LNODES(i,j))<=1e-3 && T(LNODES(i,j))>=-1e-3)
+%         Ru1(i,1) = x(LNODES(i,j));
+%         Ru1(i,2) = y(LNODES(i,j));
+%     end
+%   
+%     end
+%     
+% end
+% % 
+% 
+% % 
+% figure(1)
+% %subplot(2,2,1)
+% plot(Ru1(:,1),Ru1(:,2),'.','Color','b')
+% % text(1,.1,'c1 \rightarrow','fontsize',16)
+% %legend('Stable Spiral')
+% title('Boundary Curves for complex \lambda','fontsize',16)
+% xlabel('\alpha','fontsize',18)
+% ylabel('\beta','fontsize',18)
+% %  xlim([0 xmax/2])
+% %  ylim([0 xmax])
+hold on
+% pause(1e-10)
+%     end
+%   trisurf(LNODES,x,y,T(:,:))
+%   title('The real part of complex \sigma','fontsize',18)  
+%   shading interp
+%   xlabel('\alpha','fontsize',16)
+%   ylabel('\beta','fontsize',16)
+%   zlabel('T(\alpha,\beta)','fontsize',16)
+% %   text(0.014,0.1,'d=15','fontsize',12)
+% 
+%   set(findobj('type','legend'),'fontsize',8)
+% set(findobj('type','axes'),'fontsize',12)
+%  
+% hold on
+%  
