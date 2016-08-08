@@ -8,7 +8,7 @@ clear all;
 N = 50;
 xmax = 1;
 
-tm = 10;
+tm = 2;
 dt = 0.01;
 M = tm/dt;
 
