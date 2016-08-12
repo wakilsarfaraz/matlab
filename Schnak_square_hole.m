@@ -4,7 +4,7 @@ clear all;
 
 %addpath distmesh
 xmax = 1;
-N = 40;
+N = 60;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
@@ -172,7 +172,7 @@ end
 % end
 
 
- TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%original TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM+dt*gam*SPC;%original TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
  TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
  
  for i = 1 : NNODES

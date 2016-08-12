@@ -2,18 +2,18 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 tic
-xmax = 7;
-tm = 1;
+xmax = 3;
+tm = 2;
 dt = 0.01;
 M = tm/dt;
 
-du = 1.5;
+du = 1;
 dv = 10;
 a = 0.1;
 b = 0.9;
-gam = 600;
+gam =500;
 
-N = 50; 
+N =64; 
 X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
 [x, y] = meshgrid(X,X); 
@@ -50,10 +50,10 @@ for i = 1 : NNODES
 %         U(i) = 0;
 %         V(i) = 0;
 %     else
-%     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-%     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-  U(i) = a + b + 0.001*(sin(pi*x(i))+sin(pi*y(i)));
-    V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
+    U(i) = a + b ;%+ cos(6*pi*(x(i)))+cos(6*pi*y(i));
+    V(i) = b/(a+b)^2+cos(2*pi*(x(i)))+cos(2*pi*y(i));%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%   U(i) = a + b + 0.1*(sin((xmax*pi*x(i)))+sin((xmax*pi*y(i))));
+%   V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
 %     end
 end
 ui = [min(U) max(U)]
@@ -175,7 +175,7 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM+dt*gam*SPC;
  TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
 
 % for i = 1: NNODES
