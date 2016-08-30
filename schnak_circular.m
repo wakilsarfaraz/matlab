@@ -5,20 +5,20 @@ clear all;
 %addpath distmesh
 
 
-tm = 1;
-dt = 0.01;
+tm = 30;
+dt = 0.1;
 M = tm/dt;
 
-du = 1;
-dv = 10;
+du = .001;
+dv = 1;
 % dv = 5;
 a = 0.1;
 b = 0.9;
-gamma = 1000;
+gamma = 0.01;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 30;
+N = 70;
  fd=inline('sqrt(sum(p.^2,2))-0.5','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
@@ -35,15 +35,27 @@ U = zeros(NNODES,1);
 V = zeros(NNODES,1);
 
 
+% for i = 1 : NNODES
+% %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+% %         U(i) = 0;
+% %         V(i) = 0;
+% %     else
+% %     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
+% %     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%   U(i) = a + b + 0.05*(cos(12*pi*x(i))+cos(12*pi*y(i)));
+%     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
+% %     end
+% end
 for i = 1 : NNODES
 %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
 %         U(i) = 0;
 %         V(i) = 0;
 %     else
-%     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-%     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-  U(i) = a + b + 0.05*(cos(6*pi*x(i))+cos(6*pi*y(i)));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
+%     U(i) = a + b + exp(-cos(17*(x(i)))-cos(17*y(i)));
+    U(i) = a + b+0.3*cos(6*pi*abs(y(i)))+0.3*cos(6*pi*abs(x(i)));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+    V(i) = b/(a+b)^2;%+0.01*cos(6*pi*(x(i)^2+y(i)^2));
+%   U(i) = a + b + 0.1*(sin((xmax*pi*x(i)))+sin((xmax*pi*y(i))));
+%   V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
 %     end
 end
 ui = [min(U) max(U)]
@@ -157,14 +169,14 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM+dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;% TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gamma*SPMM+dt*gamma*SPC;% TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
  TMatrixV =  SPMM+dt*dv*SPSM+gamma*SPD;
 
 
 % for i = 1 : NNODES
 %     if (abs(fd(p(i,:)))<=1e-8 )
-%         RHSU(i) = 1;
-%         RHSV(i) = 1;
+%         RHSU(i) = 0;
+%         RHSV(i) = 0;
 %         TMatrixU(i,:) = 0;
 %         TMatrixV(i,:) = 0;
 %         TMatrixU(i,i) = 1;
@@ -203,12 +215,12 @@ for j = 1:M+1
 % subplot(1,2,2)
 trisurf(LNODES,x,y,U(:,:))
 %colorbar
-% shading interp
+shading interp
 xlabel('x','fontsize',16) 
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
-title(['Pattern formed by u'])% at t= ',num2str(T(j))],'fontsize',8)
+title(['Pattern formed by u] at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 

@@ -7,11 +7,11 @@ tm = 2;
 dt = 0.01;
 M = tm/dt;
 
-du = 1;
-dv = 10;
+du = 0.01;
+dv = 1;
 a = 0.1;
 b = 0.9;
-gam =500;
+gam = 3;
 
 N =64; 
 X = linspace(0,xmax,N+1);
@@ -56,6 +56,19 @@ for i = 1 : NNODES
 %   V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
 %     end
 end
+% for i = 1 : NNODES
+% %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+% %         U(i) = 0;
+% %         V(i) = 0;
+% %     else
+% %     U(i) = a + b + exp(-cos(17*(x(i)))-cos(17*y(i)));
+%     U(i) = a + b+0.1*cos(2*pi*y(i))+0.1*cos(2*pi*x(i));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+%     V(i) = b/(a+b)^2+0.1*cos(5*pi*((x(i)-xmax/2)^2+(y(i)-xmax/2)^2));
+% %   U(i) = a + b + 0.1*(sin((xmax*pi*x(i)))+sin((xmax*pi*y(i))));
+% %   V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
+% %     end
+% end
+
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
 % figure(1)

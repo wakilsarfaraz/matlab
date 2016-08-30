@@ -33,19 +33,24 @@ U = zeros(NNODES,1);
 V = zeros(NNODES,1);
 
 
+% for i = 1 : NNODES
+%     if (abs(fd(p(i,:))) <= 1e-8)
+%         U(i) = 0;
+%         V(i) = 0;
+%     else
+% 
+%     %U(i) = U(i)+0.1*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
+%     %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
+%     U(i) = a + b + exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
+%     %V(i) = V(i)+sin(50*pi*x(i)+5*pi*y(i));
+%     V(i) = b/(a+b)^2; 
+%     end
+% end
 for i = 1 : NNODES
-    if (abs(fd(p(i,:))) <= 1e-8)
-        U(i) = 0;
-        V(i) = 0;
-    else
-
-    %U(i) = U(i)+0.1*pi^2*sin(100*pi*sin(5*pi*x(i))+10*pi*sin(100*pi*y(i)));%*sin(0.5*pi*x(i));
-    %V(i) = V(i)+0.0001*pi^2*exp(-x(i)*y(i))*(sin(15*pi*x(i))+cos(15*pi*y(i)));
-    U(i) = a + b + exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
-    %V(i) = V(i)+sin(50*pi*x(i)+5*pi*y(i));
-    V(i) = b/(a+b)^2; 
-    end
+    U(i) = a + b+0.01*cos(25*pi*(x(i)^2+y(i)^2));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+    V(i) = b/(a+b)^2+0.3*cos(8*pi*abs(y(i)))+0.3*cos(8*pi*abs(x(i)));
 end
+
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
 % figure(1)

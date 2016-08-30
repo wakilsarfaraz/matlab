@@ -5,21 +5,21 @@ clear all;
 %addpath distmesh
 %format long
 
-N = 50;
+N = 80;
 xmax = 1;
 
-tm = 1;
+tm = 3;
 dt = 0.01;
 M = tm/dt;
 
-du = 1;
+du = .0005;
 dv = 10;
 a = 0.1;
 b = 0.9;
 % gam = 39.596;
-gam = 1000;
+gam = .01;
 T = linspace(0, tm,M+1); 
-  fd=inline('-0.05+abs(0.45-sqrt(sum(p.^2,2)))');
+  fd=inline('-0.07+abs(0.4-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
 x = p(:,1);
@@ -34,16 +34,20 @@ LNODES = t;
 U = zeros(NNODES,1);
 V = zeros(NNODES,1);
 
+% for i = 1 : NNODES
+% %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+% %         U(i) = 0;
+% %         V(i) = 0;
+% %     else
+% %     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
+% %     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%   U(i) = a + b + (sin(30*pi*x(i)^2)+sin(30*pi*y(i)^2));
+%     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
+% %     end
+% end
 for i = 1 : NNODES
-%     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
-%         U(i) = 0;
-%         V(i) = 0;
-%     else
-%     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-%     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-  U(i) = a + b + (sin(30*pi*x(i)^2)+sin(30*pi*y(i)^2));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
-%     end
+    U(i) = a + b+0.01*cos(20*pi*(x(i)^2+y(i)^2));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+    V(i) = b/(a+b)^2+0.3*cos(8*pi*abs(y(i)))+0.3*cos(8*pi*abs(x(i)));
 end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
@@ -171,8 +175,8 @@ end
 
 
 
-Tdiffu = zeros(1,length(T));
-Tdiffv = zeros(1,length(T));
+% Tdiffu = zeros(1,length(T));
+% Tdiffv = zeros(1,length(T));
 
 for j = 1:M+1
 
@@ -181,8 +185,8 @@ for j = 1:M+1
     RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
-   Tdiffu(j) = sum((U(j+1)-U(j)).^2);
-    Tdiffv(j) = sum((V(j+1)-V(j)).^2);
+%    Tdiffu(j) = sum((U(j+1)-U(j)).^2);
+%     Tdiffv(j) = sum((V(j+1)-V(j)).^2);
     %figure(1)
     
 %subplot(1,2,1)

@@ -9,17 +9,17 @@ tm = 1;
 dt = 0.05;
 M = tm/dt;
 
-du = 0.8;
-dv = 2;
+du = 0.01;
+dv = 10;
 a = 0.1;
 b = 0.9;
-gam = 36;
+gam = 0.1;
 T = linspace(0, tm,M+1); 
 
-xmax = 1;
+xmax = 2;
 N = 100;
 
-    fd=@(p) p(:,1).^2/0.5^2+p(:,2).^2/0.2^2-1;
+    fd=@(p) p(:,1).^2/0.5+p(:,2).^2/0.2^2-1;
     [p,t]=distmesh2d(fd,@huniform,xmax/N,[-0.5,-0.2;0.5,0.2],[]);
 
 x = p(:,1);
@@ -36,17 +36,18 @@ V = zeros(NNODES,1);
 
 
 for i = 1 : NNODES
-    if (abs(fd(p(i,:))) <= 1e-8)
-        U(i) = 0;
-        V(i) = 0;
-    else
-
-
-    U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-    %V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-  
-    V(i) = b/(a+b)^2; 
-    end
+%     if (abs(fd(p(i,:))) <= 1e-8)
+%         U(i) = 0;
+%         V(i) = 0;
+%     else
+    U(i) = a + b+0.3*cos(24*pi*abs(y(i)))+0.3*cos(24*pi*abs(x(i)));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+    V(i) = b/(a+b)^2;%+0.01*cos(6*pi*(x(i)^2+y(i)^2));
+% 
+%     U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
+%     %V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%   
+%     V(i) = b/(a+b)^2; 
+%     end
 end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
@@ -159,20 +160,20 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;%(Original) TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
 
 
-for i = 1 : NNODES
-    if (abs(fd(p(i,:)))<=1e-15 )
-        RHSU(i) = 1;
-        RHSV(i) = 1;
-        TMatrixU(i,:) = 0;
-        TMatrixV(i,:) = 0;
-        TMatrixU(i,i) = 1;
-        TMatrixV(i,i) = 1;
-    end
-end
+% for i = 1 : NNODES
+%     if (abs(fd(p(i,:)))<=1e-15 )
+%         RHSU(i) = 1;
+%         RHSV(i) = 1;
+%         TMatrixU(i,:) = 0;
+%         TMatrixV(i,:) = 0;
+%         TMatrixU(i,i) = 1;
+%         TMatrixV(i,i) = 1;
+%     end
+% end
 
 
 Tdiffu = zeros(1,length(T));
@@ -200,7 +201,7 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(2,1,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,U(:,:))
 %colorbar
 shading interp
 xlabel('x','fontsize',16) 
@@ -215,17 +216,17 @@ pause(1e-10)
 
 
 end
-figure(2)
-subplot(1,2,1)
-plot(T,Tdiffu)
-xlabel('Time')
-ylabel('L2 Difference')
-title('U')
-subplot(1,2,2)
-plot(T,Tdiffv)
-title('V')
-xlabel('Time')
-ylabel('L2 Difference')
+% figure(2)
+% subplot(1,2,1)
+% plot(T,Tdiffu)
+% xlabel('Time')
+% ylabel('L2 Difference')
+% title('U')
+% subplot(1,2,2)
+% plot(T,Tdiffv)
+% title('V')
+% xlabel('Time')
+% ylabel('L2 Difference')
 
 %figure(2)
 % subplot(2,2,3)
