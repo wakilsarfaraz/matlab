@@ -3,8 +3,8 @@
 % Author Wakil Sarfaraz 25/04/2016
 clear all;
 tic
-xmax =1;
-N = 1000; %(Number of points on the x, y interval on which the equation is solved.
+xmax =5;
+N = 2000; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -35,16 +35,19 @@ end
 
 T = (-(x+y).^3-x+y)./(x+y);
 D = (x+y).^2;
-C = y-x+(y+x).^3-2*(y+x).^2;
+C1 = y-x-(y+x).^3-2*(y+x).^2;
+C2 = y-x-(y+x).^3+2*(y+x).^2;
+
 Dcr = T.^2-4*D;
 
 Tr = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-
-        Tr(i,1) = T(LNODES(i,j));
-        Tr(i,2) = Dcr(LNODES(i,j));
-%     end
+        if(C1(LNODES(i,j))>=-1e-3 && C1(LNODES(i,j))<=1e-3)
+        Tr(i,1) = x(LNODES(i,j));
+        Tr(i,2) = y(LNODES(i,j));
+        end
+ 
 %   
     end
 %     
@@ -55,7 +58,7 @@ end
 % figure(1)
 % %subplot(2,2,1)
 plot(Tr(:,1),Tr(:,2),'.','Color','b')
-
+hold on
 % % text(.6,1,'A','fontsize',16)
 % %legend('Stable Spiral')
 % title('Stability plot for real \lambda','fontsize',16)

@@ -1,9 +1,9 @@
-% This program solves Poisson's equation in Cartesian coordinates.
+%% This program solves Poisson's equation in Cartesian coordinates.
 % Wakil Sarfaraz with Help of Dr Kathryn Gillow. 22 May 2014 
 clear all;
 tic
 xmax =1;
-N = 50; %(Number of points on the x, y interval on which the equation is solved.
+N = 100; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -54,18 +54,23 @@ for n = 1: NTRI
        xx = (1-ksi-eta)*r1(1) + ksi* r2(1) + eta*r3(1); %This is x(ksi,eta) which is used for transformation.
        yy = (1-ksi-eta)*r1(2) + ksi* r2(2) + eta*r3(2); % This is y(ksi,eta) which is used for transformation.
        
-       F(1) = (1-ksi-eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third
-                                                                      %vertix of traingles
+       F(1) = (1-ksi-eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third                                                              %vertix of traingles
        F(2) = (ksi)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
        F(3) = (eta)*5*pi^2*sin(pi*xx)*sin(2*pi*yy)*det(J)*1/2;
 
-%        F(1) = (1-ksi-eta)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2; %This computes the integral for the first, second and third
-%                                                                          %vertix of traingles
+% 
+%        F(1) = (1-ksi-eta)*2*sin(xx)*sin(yy)*det(J)*1/2; %This computes the integral for the first, second and third
+%        F(2) = (ksi)*2*sin(xx)*sin(yy)*det(J)*1/2;       % In the transformed coordinates.
+%        F(3) = (eta)*2*sin(xx)*sin(yy)*det(J)*1/2;
+
+%        F(1) = (1-ksi-eta)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2;                                                                   %vertix of traingles
 %        F(2) = (ksi)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2;       % In the transformed coordinates.
 %        F(3) = (eta)*5*pi^2*cos(pi*xx)*cos(2*pi*yy)*det(J)*1/2;
-%        F(1) = (1-ksi-eta)*det(J)*1/2;%| these will solve for laplace u =1 with zero dirichlet bcs.
-%        F(2) = ksi* det(J)*1/2;
-%        F(3) = eta* det(J)*1/2;
+
+
+%        F(1) = -(1-ksi-eta)*det(J)*4/2;%| these will solve for laplace u =1 with zero dirichlet bcs.
+%        F(2) = -ksi* det(J)*4/2;
+%        F(3) = -eta* det(J)*4/2;
        for i = 1 : 3
          
            LV(LNODES(n,i)) = LV(LNODES(n,i))+ F(i); % This assigns all the newly computed values to the Load vector.
@@ -83,7 +88,45 @@ for i = 1: NNODES
 
     end
 end
+% for i = 1: NNODES
+%     if (x(i)==0 && y(i)>=0 && y(i)<=xmax)
+%         LV(i) = 0;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%     elseif(x(i)==xmax && y(i)>=0 && y(i)<=xmax)
+%         LV(i) = sin(xmax)*sin(y(i));
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%      elseif(y(i)==0 && x(i)>=0 && x(i)<=xmax)
+%         LV(i) = 0;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%      elseif(y(i)==xmax && x(i)>=0 && x(i)<=xmax)
+%         LV(i) = sin(xmax)*sin(x(i));
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%     end
+% end
 
+% for i = 1: NNODES
+%     if (x(i)==0 && y(i)>=0 && y(i)<=xmax)
+%         LV(i) = y(i)^2;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%     elseif(x(i)==xmax && y(i)>=0 && y(i)<=xmax)
+%         LV(i) = xmax+y(i)^2;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%      elseif(y(i)==0 && x(i)>=0 && x(i)<=xmax)
+%         LV(i) = x(i)^2;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%      elseif(y(i)==xmax && x(i)>=0 && x(i)<=xmax)
+%         LV(i) = xmax+x(i)^2;
+%         SP(i,:) = 0;
+%         SP(i,i) =1 ;
+%     end
+% end
 
 
 U = SP\LV; %Solves the linear system.
@@ -92,6 +135,11 @@ toc
  u = sin(pi*x).*sin(2*pi*y);
 
 %  u = (cos(pi*x).*cos(2*pi*y));
+
+% u = x.^2+y.^2;
+
+% u = sin(x).*sin(y);
+ 
 
 
 figure(1)
@@ -116,13 +164,13 @@ shading interp
 D = abs(U-u);
 C = u-U;
 
-
+% 
  Error = sum(D.^2)
- 
- 
- figure(2)
-trisurf(LNODES,x,y,D)
-shading interp
+%  
+%  
+%  figure(2)
+% trisurf(LNODES,x,y,D)
+% shading interp
 
 
   

@@ -5,19 +5,19 @@ clear all;
 %addpath distmesh
 %format long
 
-N = 80;
+N = 90;
 xmax = 1;
 
 tm = 3;
 dt = 0.01;
 M = tm/dt;
 
-du = .0005;
+du = .001;
 dv = 10;
 a = 0.1;
 b = 0.9;
 % gam = 39.596;
-gam = .01;
+gam = 0.5;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.07+abs(0.4-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
@@ -46,8 +46,8 @@ V = zeros(NNODES,1);
 % %     end
 % end
 for i = 1 : NNODES
-    U(i) = a + b+0.01*cos(20*pi*(x(i)^2+y(i)^2));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
-    V(i) = b/(a+b)^2+0.3*cos(8*pi*abs(y(i)))+0.3*cos(8*pi*abs(x(i)));
+    U(i) = a + b+0.01*cos(8*pi*(x(i)^2+y(i)^2));%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
+    V(i) = b/(a+b)^2+0.3*cos(20*pi*abs(y(i)))+0.3*cos(20*pi*abs(x(i)));
 end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]

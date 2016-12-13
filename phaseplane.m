@@ -1,7 +1,7 @@
-%% Phase plane for schnakenberg reaction system in absence of diffusion
-eps = 0.3;
-d=0.25;
-tmax=5;
+%% Phase plane for odes
+eps = 0.1;
+d=0.3;
+tmax=1;
 cent = 2;
 a = 0.1;
 b = 2;

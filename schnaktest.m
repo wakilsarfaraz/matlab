@@ -2,16 +2,16 @@
 % Wakil Sarfaraz   30/11/15
 clear all;
 tic
-xmax = 1;
+xmax = 2;
 tm = 1;
 dt = 0.01;
 M = tm/dt;
 
-du = 0.1;
-dv = 8;
-a = 1;
-b = 1;
-gam = 85.7;
+du = .01;
+dv = 1000;
+a = 0.1;
+b = 0.9;
+gam = 0.1;
 
 N = 50; 
 X = linspace(0,xmax,N+1);
@@ -44,18 +44,18 @@ for i = 1:N
                                    
     end
 end
-
 for i = 1 : NNODES
-    if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
-        U(i) = 0;
-        V(i) = 0;
-    else
-    U(i) = a + b + 0.001*exp(-100*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-    V(i) = a + b + 0.001*abs(sin(-100*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+        U(i) = a+b+0.01*cos(2*pi*(x(i)))*cos(2*pi*(y(i)));
+        V(i) = b/(a+b)^2;
+%     else
+
   
     %V(i) = b/(a+b)^2; 
-    end
+%     end
 end
+
+
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
 % figure(1)
@@ -175,44 +175,46 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM-dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
- TMatrixV =  SPMM-dt*dv*SPSM+gam*SPD;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM+dt*gam*SPC;
+ TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
+% 
+% for i = 1: NNODES
+%     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
+%         RHSU(i) = 0;
+%         RHSV(i) = 1;
+%         TMatrixU(i,:) = 0;
+%         TMatrixV(i,:) = 0;
+%         TMatrixU(i,i) = 1;
+%         TMatrixV(i,i) = 1;
+%     end
+% 
+% end
 
-for i = 1: NNODES
-    if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
-        RHSU(i) = 0;
-        RHSV(i) = 1;
-        TMatrixU(i,:) = 0;
-        TMatrixV(i,:) = 0;
-        TMatrixU(i,i) = 1;
-        TMatrixV(i,i) = 1;
-    end
 
-end
-Tdiffu = zeros(1,length(T));
-Tdiffv = zeros(1,length(T));
+% Tdiffv = zeros(1,length(T));
+% Tdiffu = zeros(1,length(T));
 for j = 1:M+1
 
     RHSU = SPMM*U+dt*gam*UG;
     RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
-   Tdiffu(j) = sum((U(j+1)-U(j)).^2);
-    Tdiffv(j) = sum((V(j+1)-V(j)).^2);
+%    Tdiffu(j) = sum((U(j+1)-U(j)).^2);
+%     Tdiffv(j) = sum((V(j+1)-V(j)).^2);
    % figure(1)
     
 %  subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
+ trisurf(LNODES,x,y,U(:,:))
 % colorbar
-% shading interp
+shading interp
 % xlabel('x','fontsize',16) 
 % xlim([0 xmax])
 % ylim([0 xmax])
-% view(2)
+view(2)
 % ylabel('y','fontsize',16)
 % zlabel('u & v','fontsize',16)
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+axis equal tight
 % hold on
 % subplot(1,2,2)
 %  trisurf(LNODES,x,y,V(:,:)+0.02)
@@ -232,50 +234,50 @@ pause(1e-10)
 
 
 end
-figure(1)
-subplot(1,2,1)
-plot(T,Tdiffu)
-xlabel('Time')
-ylabel('L2 Difference')
-title('U')
-subplot(1,2,2)
-plot(T,Tdiffv)
-title('V')
-xlabel('Time')
-ylabel('L2 Difference')
+% figure(1)
+% subplot(1,2,1)
+% plot(T,Tdiffu)
+% xlabel('Time')
+% ylabel('L2 Difference')
+% title('U')
+% subplot(1,2,2)
+% plot(T,Tdiffv)
+% title('V')
+% xlabel('Time')
+% ylabel('L2 Difference')
 
-figure(2)
-subplot(1,2,1)
- trisurf(LNODES,x,y,U(:,:))
- colorbar
- xlim([0 xmax])
- ylim([0 xmax])
- xlabel('x')
- ylabel('y')
- %zlabel('u and v')
- view(2)
- title ('Pattern formed by u')
- %legend('Evolved pattern of u')
- shading interp
- axis equal tight
- hold on
- subplot(1,2,2)
- trisurf(LNODES,x,y,V(:,:)+0.02)
- colorbar 
- xlim([0 xmax])
- ylim([0 xmax])
- xlabel('x')
- ylabel('y')
- view(2)
- title ('Pattern formed by v')
- %legend('Evolved pattern of v')
- shading interp
- axis equal tight
-%movie2avi(MV,'SpotsToSptripes.avi');
-uf = [min(U) max(U)]
-vf = [min(V)+0.04 max(V)]
-
-hold off
+% figure(2)
+% subplot(1,2,1)
+%  trisurf(LNODES,x,y,U(:,:))
+%  colorbar
+%  xlim([0 xmax])
+%  ylim([0 xmax])
+%  xlabel('x')
+%  ylabel('y')
+%  %zlabel('u and v')
+%  view(2)
+%  title ('Pattern formed by u')
+%  %legend('Evolved pattern of u')
+%  shading interp
+%  axis equal tight
+%  hold on
+%  subplot(1,2,2)
+%  trisurf(LNODES,x,y,V(:,:)+0.02)
+%  colorbar 
+%  xlim([0 xmax])
+%  ylim([0 xmax])
+%  xlabel('x')
+%  ylabel('y')
+%  view(2)
+%  title ('Pattern formed by v')
+%  %legend('Evolved pattern of v')
+%  shading interp
+%  axis equal tight
+% %movie2avi(MV,'SpotsToSptripes.avi');
+% uf = [min(U) max(U)]
+% vf = [min(V) max(V)]
+% 
+% hold off
  
  
  
