@@ -3,15 +3,15 @@
 clear all; close all; clc;
 tic
 xmax = 1;
-tm = 1;
+tm = 28;
 dt = .01;
 M = tm/dt;
-
-du = 1;
-dv = 10;
+eps = 0.2;
+du = .4;
+dv = 2;
 a = 0.1;
-b = 0.9;
-gam = 1000;
+b = 0.8;
+gam = 1.3;
 
 
 N =64; 
@@ -202,29 +202,81 @@ end
 MatrixU = zeros(length(T),length(U));
 MatrixV = zeros(length(T),length(V));
 for j = 1:M+1
+    if(T(j)>=tm/23-eps && T(j)<=tm/23+eps)
+%     a = a*T(j);
+%     b = b*exp(-((T(j)-tm/4)^2)/T(j));
+gam = 2.4*gam*T(j);
+%  U = T(j)*U;
+%     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U = TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)= U;
+    MatrixV(j,:)= V;
+    elseif(T(j)>=6.5-eps && T(j)<=6.5+eps)
+%     a = a*T(j);
+U = (a+b)*T(j-20)*ones(NNODES,1);
+V = (a+b)*T(j-50)*ones(NNODES,1);
+%     b = b*exp(-((T(j)-tm/4)^2)/T(j));
+% gam = 2.4*gam*T(j);
+%     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U = TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)= U;
+    MatrixV(j,:)= V;
+        elseif(T(j)>=20-eps && T(j)<=20+eps)
+%     a = a*T(j);
+    U = T(j-100)*ones(NNODES,1);
+    V = T(j-190)*ones(NNODES,1);
+%     b = b*exp(-((T(j)-tm/4)^2)/T(j));
+% gam = 2.4*gam*T(j);
+%     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U = TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)= U;
+    MatrixV(j,:)= V;
+%             elseif(T(j)>=tm/1.2-eps && T(j)<=tm/1.2+eps)
+% %     a = a*T(j);
+% U = (a+b)*ones(NNODES,1);
+% V = (a+b)*ones(NNODES,1);
+% %     b = b*exp(-((T(j)-tm/4)^2)/T(j));
+% % gam = 2.4*gam*T(j);
+% %     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U = TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)= U;
+%     MatrixV(j,:)= V;
+end
     RHSU = SPMM*U+dt*gam*a*A;
     RHSV = SPMM*V+dt*gam*b*A;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     MatrixU(j,:)= U;
     MatrixV(j,:)= V;
-figure(1)
-trisurf(LNODES,x,y,U(:,:))
-%  colorbar
-shading interp
-xlabel('x','fontsize',20) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',20)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',18)
+% figure(1)
+% trisurf(LNODES,x,y,U(:,:))
+% %  colorbar
+% shading interp
+% xlabel('x','fontsize',20) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',20)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',18)
 % title(['Evolution of u at t = 4'],'fontsize',18)
 % axis equal tight
 
 
 
-pause(1e-10) 
+% pause(1e-10) 
 
 end
 
@@ -244,7 +296,7 @@ end
 % set(findobj('type','axes'),'fontsize',18)
  
 % 
-figure(2)
+figure(1)
 L2U = zeros(length(T),1);
 L2V = zeros(length(T),1);
 
@@ -257,13 +309,17 @@ end
 L2U(length(T))=L2U(length(T)-1);
 L2V(length(T))=L2V(length(T)-1);
 
-plot(T,L2U,'LineWidth',2,'color','r')
+plot(T,1/max(L2U)*L2U,'LineWidth',2,'color','r')
 
 hold on
-plot(T,L2V,'LineWidth',2,'color','b')
+plot(T,1/max(L2V)*L2V,'LineWidth',2,'color','b')
+ylim([0 1.1])
+% xlim([0 9])
 set(findobj('type','legend'),'fontsize',20)
 set(findobj('type','axes'),'fontsize',20)
 legend('||U^{m+1}-U^m||/\tau','||V^{m+1}-V^m||/\tau')
+legend('Location','northeast')
+% legend('Orientation','horizontal')
 xlabel('Time','fontsize',20)
 ylabel('||\cdot||_L_2','fontsize',20)
 title('Convergence of solutions','fontsize',16)

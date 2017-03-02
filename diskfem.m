@@ -3,21 +3,21 @@
 clear all;
 
 %addpath distmesh
-
+format short
 
 % tm = 60;
 % dt = 0.1;
-tm = 28;
-dt = .01;
+tm = 6;
+dt = .1;
 
 M = tm/dt;
 
-du = .001;
-dv = .01;
+du = .01;
+dv = 1;
 % dv = 5;
-a = .4;
+a = 0.1;
 b = 0.9;
-gamma = 0.1;
+gamma = 10;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
@@ -45,17 +45,13 @@ for i = 1 : NNODES
 %     else
 %     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
 %     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-%   U(i) = a + b + 0.05*(cos(6*pi*x(i))+cos(6*pi*y(i)));
+  U(i) = a + b + 0.05*(cos(6*pi*x(i))+cos(6*pi*y(i)));
+    V(i) = b/(a+b)^2+0.1*(sin((x(i)+y(i)))); 
+
+
+%       U(i) = a + b + 0.15*(cos(6*pi*x(i))+cos(6*pi*y(i)));
 %     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
 
-
-      U(i) = a + b + 0.3*(cos(7*pi*x(i))+cos(7*pi*y(i)))+0.5*cos(5*pi*(x(i)^2+y(i)^2));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
-    
-    
-%     U(i) = a + b + 0.15*cos(6*pi*(x(i)^2+y(i)^2));
-%     V(i) = b/(a+b)^2;
-%     end
 end
 % for i = 1 : NNODES
 % %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
@@ -184,16 +180,18 @@ end
  TMatrixV =  SPMM+dt*dv*SPSM+gamma*SPD;
 
 
-% for i = 1 : NNODES
-%     if (abs(fd(p(i,:)))<=1e-8 )
+for i = 1 : NNODES
+    if (abs(fd(p(i,:)))<=1e-8 )
 %         RHSU(i) = 0;
 %         RHSV(i) = 0;
 %         TMatrixU(i,:) = 0;
 %         TMatrixV(i,:) = 0;
 %         TMatrixU(i,i) = 1;
 %         TMatrixV(i,i) = 1;
-%     end
-% end
+U(LNODES(i,1))=U(LNODES(i,2));
+U(LNODES(i,2))=U(LNODES(i,3));
+    end
+end
 
 
 % Tdiffu = zeros(1,length(T));
@@ -201,10 +199,6 @@ end
 MatrixU = zeros(length(T),length(U));
 MatrixV = zeros(length(T),length(U));
 for j = 1:M+1
-
-
-
-
     RHSU = SPMM*U+dt*gamma*a*UG;
     RHSV = SPMM*V+dt*gamma*b*VG;
     U = TMatrixU\RHSU;
@@ -216,13 +210,15 @@ for j = 1:M+1
    MatrixU(j,:) = U;
    MatrixV(j,:) = V;
 % subplot(1,2,1)
+figure(1)
+format short
 trisurf(LNODES,x,y,U(:,:))
-% colorbar
+colorbar
 shading interp
 xlabel('x','fontsize',16) 
 view(2)
 ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
+zlabel('u','fontsize',16)
 title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
 % subplot(1,2,2)
@@ -237,10 +233,8 @@ axis equal tight
 % axis equal tight
 % %MV(j)=getframe(gcf);
  pause(1e-10) 
-
-
-
 end
+max(U)
 % figure(2)
 % subplot(1,2,1)
 % plot(T,Tdiffu)
@@ -271,21 +265,21 @@ end
 %  shading interp
 %  axis equal tight
 %movie2avi(MV,'Disc_pattern.avi');
-% figure(1)
+% figure(2)
 % L2U = zeros(length(T),1);
 % L2V = zeros(length(T),1);
 % 
 % for k = 1: length(T)-1
 %    
-%     L2U(k) = sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2);
-%     L2V(k) = sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2);
+%     L2U(k) = sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(k));
+%     L2V(k) = sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(k));
 % end
 % 
 % 
-% plot(T,L2U,'LineWidth',3,'color','r')
+% plot(T,L2U,'LineWidth',2,'color','r')
 % 
 % hold on
-% plot(T,L2V,'LineWidth',3,'color','b')
+% plot(T,L2V,'LineWidth',2,'color','b')
   set(findobj('type','legend'),'fontsize',18)
 set(findobj('type','axes'),'fontsize',18)
 % legend('||U^{m+1}-U^m||_L_2','||V^{m+1}-V^m||_{L_2}')
@@ -294,4 +288,3 @@ set(findobj('type','axes'),'fontsize',18)
 % title('Convergence of solutions','fontsize',16)
 % uf = [min(U) max(U)]
 % vf = [min(V) max(V)]
-

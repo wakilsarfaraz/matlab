@@ -3,30 +3,32 @@
 clear all;
 
 %addpath distmesh
-
+tic
 
 % tm = 60;
 % dt = 0.1;
-tm = 28;
-dt = .01;
+tm = 9;
+dt = .001;
 
 M = tm/dt;
 
-du = .001;
+du = .0001;
 dv = .01;
 % dv = 5;
-a = .4;
+a = 0.05;
 b = 0.9;
-gamma = 0.1;
+gamma = 1000;
 T = linspace(0, tm,M+1); 
 
 xmax = 1;
-N = 40;
+N = 30;
  fd=inline('sqrt(sum(p.^2,2))-1','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
 x = p(:,1);
 y = p(:,2);
+
+[rr tt]=cart2pol(x,y);
 
 NNODES = length(x);
 NTRI = size(t,1);
@@ -41,20 +43,18 @@ V = zeros(NNODES,1);
 for i = 1 : NNODES
 %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
 %         U(i) = 0;
-%         V(i) = 0;
+
 %     else
-%     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-%     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
+%     U(i) = a + b + 0.1*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
+%     V(i) = b/(a+b)^2;% + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
 %   U(i) = a + b + 0.05*(cos(6*pi*x(i))+cos(6*pi*y(i)));
 %     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
-
-
-      U(i) = a + b + 0.3*(cos(7*pi*x(i))+cos(7*pi*y(i)))+0.5*cos(5*pi*(x(i)^2+y(i)^2));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
-    
-    
-%     U(i) = a + b + 0.15*cos(6*pi*(x(i)^2+y(i)^2));
-%     V(i) = b/(a+b)^2;
+%       U(i) = (cos(2*pi*(x(i))+y(i)))+2.*sin(2*pi*(x(i)^2+y(i)^2));       %eigenmode 9
+% U(i) = a+b+(cos(1.8*pi*x(i))*cos(1.8*pi*y(i)))+sin(pi*(x(i)^2+y(i)^2));
+U(i) = a+b+cos(4*pi*(x(i)^2))*cos(4*pi*y(i)^2)+0.3*cos(1.5*pi*(x(i)^2+y(i)^2));
+% U(i)=a+b+cos(4*pi*(x(i)^2+y(i)^2))+0.3*cos(2*pi*x(i))*cos(2*pi*y(i));
+V(i) = b/(a+b)^2;%+cos(2.5*pi*x(i))+cos(2.5*pi*y(i))+(x(i)^2+y(i)^2);
+%     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
 %     end
 end
 % for i = 1 : NNODES
@@ -194,8 +194,16 @@ end
 %         TMatrixV(i,i) = 1;
 %     end
 % end
-
-
+for i = NNODES
+    if (abs(fd(p(i,:)))<=1e-8)
+        U(LNODES(i,1))=U(LNODES(i,2));
+        U(LNODES(i,3))=U(LNODES(i,1));
+        U(LNODES(i,2))=U(LNODES(i,3));
+        V(LNODES(i,1))=V(LNODES(i,2));
+        V(LNODES(i,3))=V(LNODES(i,1));
+        V(LNODES(i,2))=V(LNODES(i,3));
+    end
+end
 % Tdiffu = zeros(1,length(T));
 % Tdiffv = zeros(1,length(T));
 MatrixU = zeros(length(T),length(U));
@@ -216,14 +224,17 @@ for j = 1:M+1
    MatrixU(j,:) = U;
    MatrixV(j,:) = V;
 % subplot(1,2,1)
-trisurf(LNODES,x,y,U(:,:))
-% colorbar
+%trisurf(LNODES,x,y,U(:,:))
+trisurf(t,x,y,1/max(U)*U(:,:))
+ colorbar
 shading interp
 xlabel('x','fontsize',16) 
 view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+% title('Eigenmode for k=12')
+title(['Evolution of u at t= 6'])
 axis equal tight
 % subplot(1,2,2)
 % trisurf(LNODES,x,y,U(:,:))
@@ -241,6 +252,9 @@ axis equal tight
 
 
 end
+toc
+size(LNODES)
+size(x)
 % figure(2)
 % subplot(1,2,1)
 % plot(T,Tdiffu)
@@ -280,18 +294,17 @@ end
 %     L2U(k) = sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2);
 %     L2V(k) = sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2);
 % end
-% 
-% 
+
+
 % plot(T,L2U,'LineWidth',3,'color','r')
 % 
 % hold on
 % plot(T,L2V,'LineWidth',3,'color','b')
-  set(findobj('type','legend'),'fontsize',18)
-set(findobj('type','axes'),'fontsize',18)
+%   set(findobj('type','legend'),'fontsize',18)
+% set(findobj('type','axes'),'fontsize',18)
 % legend('||U^{m+1}-U^m||_L_2','||V^{m+1}-V^m||_{L_2}')
 % xlabel('Time','fontsize',18)
 % ylabel('||\cdot||_L_2','fontsize',18)
 % title('Convergence of solutions','fontsize',16)
 % uf = [min(U) max(U)]
 % vf = [min(V) max(V)]
-
