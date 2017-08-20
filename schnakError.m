@@ -4,16 +4,16 @@
 tic
 clear all; close all; clc;
 xmax = 1;
-tm = 1;
-dt = .001;
+tm = 4;
+dt = .005;
 M = tm/dt;
-du = .01;
+du = .1;
 dv = .1;
 a = .1;
-b = .9;
-gam = 100;
-eps = .05;
-N =100; 
+b = 1.2;
+gam = 1;
+eps = .25;
+N =64; 
 X = linspace(0,xmax,N+1);
 T = linspace(0,tm,M+1); 
 [x, y] = meshgrid(X,X);                        
@@ -38,8 +38,8 @@ for i = 1:N
 end
 for i = 1 : NNODES
     
-        U(i) = a + b +0.001*(cos(6*pi*(x(i)))*cos(6*pi*y(i)));
-    V(i) = b/(a+b)^2+0.001*(cos(6*pi*x(i))*cos(6*pi*x(i)));
+        U(i) = a + b +0.05*(cos(6*pi*(x(i)))*cos(6*pi*y(i)));
+    V(i) = b/(a+b)^2+0.05*(cos(6*pi*x(i))*cos(6*pi*x(i)));
 % 
 %     U(i) = a + b +0.001*(cos(4*pi*(x(i)))*cos(4*pi*y(i)));
 %     V(i) = b/(a+b)^2+0.001*(cos(4*pi*x(i))*cos(4*pi*x(i)));
@@ -162,10 +162,10 @@ end
 MatrixU = zeros(length(T),length(U));
 MatrixV = zeros(length(T),length(V));
 for j = 1:M+1
-if(T(j)>=tm/4-eps && T(j)<=tm/4+eps)
-%     a = a*T(j);
-%     b = b*exp(-((T(j)-tm/4)^2)/T(j));
-gam = gam*T(j);
+if(T(j)>=tm/5-eps && T(j)<=tm/5+eps)
+    a = b*T(j);
+      b = a*T(j);
+ gam =.03*gam*T(j);
 %     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
@@ -173,7 +173,8 @@ gam = gam*T(j);
     V = TMatrixV\RHSV;
     MatrixU(j,:)= U;
     MatrixV(j,:)= V;
-%     
+end
+    
 % else if (T(j)>=tm/2-eps && T(j)<=tm/2+eps)
 % %     a = a*T(j);
 % %     b = b*exp((T(j)-tm/2)^2);
@@ -199,7 +200,7 @@ gam = gam*T(j);
 % %  
 %     end
 %     end
-end
+% end
 % a = 0.1;
 % b = 0.9;
 
@@ -209,17 +210,17 @@ end
     V = TMatrixV\RHSV;
     MatrixU(j,:)=U;
     MatrixV(j,:)=V;
-figure(1)
-trisurf(LNODES,x,y,U(:,:))
-% colorbar
-shading interp
-xlabel('x','fontsize',20) 
-xlim([0 xmax])
-ylim([0 xmax])
-view(2)
-ylabel('y','fontsize',20)
-zlabel('u & v','fontsize',16)
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',18)
+% figure(1)
+% trisurf(LNODES,x,y,U(:,:))
+% % colorbar
+% shading interp
+% xlabel('x','fontsize',20) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',20)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',18)
 % title(['Evolution of u at t = 0.1'],'fontsize',18)
 % axis equal tight
 
@@ -245,31 +246,31 @@ end
 % set(findobj('type','axes'),'fontsize',18)
  
 
-figure(2)
+%figure(2)
 L2U = zeros(length(T),1);
 L2V = zeros(length(T),1);
 
 for k = 1: length(T)-1
    if (k>=1 && k<=30)
-    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2))/T(j)^1000;
-    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2))/T(j)^1000;
+    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
+    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
    end
-    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2));
-    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2));
+    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
+    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
 end
 
 L2U(length(T))=L2U(length(T)-1);
 L2V(length(T))=L2V(length(T)-1);
-
-plot(T,1e-1*L2U,'LineWidth',2,'color','r')
+figure(1)
+plot(T,L2U,'LineWidth',2,'color','r')
 
 hold on
-plot(T,1e-1*L2V,'LineWidth',2,'color','b')
+plot(T,L2V,'LineWidth',2,'color','b')
 set(findobj('type','legend'),'fontsize',20)
 set(findobj('type','axes'),'fontsize',20)
-% legend('||U^{m+1}-U^m||/\tau','||V^{m+1}-V^m||/\tau')
+legend('log(||U^{m+1}-U^m||/\tau)','log(||V^{m+1}-V^m||/\tau)','Location','NorthEast')
 xlabel('Time','fontsize',20)
-ylabel('||\cdot||_L_2','fontsize',20)
+ylabel('log(||\cdot||_L_2)','fontsize',20)
 title('Convergence of solutions','fontsize',16)
 
 toc
