@@ -7,16 +7,17 @@ format short
 N = 35;
 xmax = 1;
 
-tm = 4;
-dt = 0.01;
+tm = 20;
+dt = 0.1;
 M = tm/dt;
 
 du = .01;
 dv = 1;
 a = 0.1;
 b = 0.9;
+epsilon = 0.1;
 % gam = 39.596;
-gam = 10;
+gam = 1;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.25+abs(0.75-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
@@ -154,17 +155,55 @@ MatrixV = zeros(length(T),length(V));
 
 for j = 1:M+1
 
-if(T(j)>=tm/7-eps && T(j)<=tm/7+eps)
-    a = (1/(T(j)-tm/7+eps))*a;
-      b = (1/(T(j)-tm/7)+eps)*b;
-
+if(T(j)>=tm/30-epsilon && T(j)<=tm/30+epsilon)
+%     a = (1/(T(j)-tm/7+eps))*a;
+%       b = (1/(T(j)-tm/7)+eps)*b;
+    a = .1*a;
+b = .5*b;
     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
     U =TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     MatrixU(j,:)=U;
-    MatrixV(j,:)= V;     
-      
+    MatrixV(j,:)= V;
+    V = 1/min(V)*V;
+    U = 1/min(U)*U;
+else if(T(j)>=tm/4-epsilon && T(j)<=tm/4+epsilon)
+    a = .1*a;
+b = .9*b;
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U =TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)=U;
+    MatrixV(j,:)= V;
+    V = 150*V;
+    U = 600*U;    
+else if(T(j)>=tm/2-epsilon && T(j)<=tm/2+epsilon)
+        a = .5*T(j)*a;
+        b = .8*T(j)*b;
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U =TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)=U;
+    MatrixV(j,:)= V;
+    V = 70*V;
+    U = 45*U;
+    else if(T(j)>=3*tm/4-epsilon && T(j)<=3*tm/4+epsilon)
+        a = .1*a;
+        b = .9*b;
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U =TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    MatrixU(j,:)=U;
+    MatrixV(j,:)= V;
+    U = 23*U;
+     V = 23*V;
+        end
+    end
+    end
     %figure(1)
     
 %subplot(1,2,1)
@@ -207,7 +246,7 @@ L2U = zeros(length(T),1);
 L2V = zeros(length(T),1);
 
 for k = 1: length(T)-1
-   if (k>=1 && k<=30)
+   if (k>=1 && k<=60)
     L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
     L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
    end
@@ -218,15 +257,17 @@ end
 L2U(length(T))=L2U(length(T)-1);
 L2V(length(T))=L2V(length(T)-1);
 figure(1)
-plot(T,L2U,'LineWidth',2,'color','r')
+plot(T,.8/max(L2U)*L2U,'LineWidth',2,'color','r')
 
 hold on
-plot(T,L2V,'LineWidth',2,'color','b')
+plot(T,.75/max(L2V)*L2V,'LineWidth',2,'color','b')
+ylim([0 1.4]);
 set(findobj('type','legend'),'fontsize',20)
 set(findobj('type','axes'),'fontsize',20)
 legend('(||U^{m+1}-U^m||/\tau)','(||V^{m+1}-V^m||/\tau)','Location','NorthEast')
 xlabel('Time','fontsize',20)
-ylabel('log(||\cdot||_L_2)','fontsize',20)
+% ylabel('log(||\cdot||_L_2)','fontsize',20)
+ylabel('||\cdot||_L_2','fontsize',20)
 title('Convergence of solutions','fontsize',16)
 
 
