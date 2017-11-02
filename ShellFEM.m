@@ -4,20 +4,20 @@ clear all;
 %addpath distmesh
 %format long
 format short
-N = 35;
+N = 40;
 xmax = 1;
 
-tm = 20;
-dt = 0.1;
+tm = 1;
+dt = 0.01;
 M = tm/dt;
 
-du = .01;
+du = 0.001;
 dv = 1;
 a = 0.1;
 b = 0.9;
 epsilon = 0.1;
 % gam = 39.596;
-gam = 1;
+gam =.01;
 T = linspace(0, tm,M+1); 
   fd=inline('-0.25+abs(0.75-sqrt(sum(p.^2,2)))');
   [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
@@ -35,8 +35,8 @@ U = zeros(NNODES,1);
 V = zeros(NNODES,1);
 
 for i = 1 : NNODES
-      U(i) = a + b + 0.3*(cos(8*pi*x(i))+cos(8*pi*y(i)))+0.4*sin(8*pi*(x(i)^2+y(i)^2));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
+      U(i) = a + b + 0.4*(cos(7*pi*x(i))*cos(7*pi*y(i)))+.2*cos(8*pi*(x(i)^2+y(i)^2));
+    V(i) = b/(a+b)^2+0.3*(cos(5*pi*(x(i)+y(i)))); 
 end
 
 
@@ -154,68 +154,74 @@ MatrixV = zeros(length(T),length(V));
 
 
 for j = 1:M+1
+    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+    U = TMatrixU\RHSU;
+    V = TMatrixV\RHSV;
+    
 
-if(T(j)>=tm/30-epsilon && T(j)<=tm/30+epsilon)
+% if(T(j)>=tm/30-epsilon && T(j)<=tm/30+epsilon)
 %     a = (1/(T(j)-tm/7+eps))*a;
 %       b = (1/(T(j)-tm/7)+eps)*b;
-    a = .1*a;
-b = .5*b;
-    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
-    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
-    U =TMatrixU\RHSU;
-    V = TMatrixV\RHSV;
-    MatrixU(j,:)=U;
-    MatrixV(j,:)= V;
-    V = 1/min(V)*V;
-    U = 1/min(U)*U;
-else if(T(j)>=tm/4-epsilon && T(j)<=tm/4+epsilon)
-    a = .1*a;
-b = .9*b;
-    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
-    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
-    U =TMatrixU\RHSU;
-    V = TMatrixV\RHSV;
-    MatrixU(j,:)=U;
-    MatrixV(j,:)= V;
-    V = 150*V;
-    U = 600*U;    
-else if(T(j)>=tm/2-epsilon && T(j)<=tm/2+epsilon)
-        a = .5*T(j)*a;
-        b = .8*T(j)*b;
-    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
-    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
-    U =TMatrixU\RHSU;
-    V = TMatrixV\RHSV;
-    MatrixU(j,:)=U;
-    MatrixV(j,:)= V;
-    V = 70*V;
-    U = 45*U;
-    else if(T(j)>=3*tm/4-epsilon && T(j)<=3*tm/4+epsilon)
-        a = .1*a;
-        b = .9*b;
-    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
-    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
-    U =TMatrixU\RHSU;
-    V = TMatrixV\RHSV;
-    MatrixU(j,:)=U;
-    MatrixV(j,:)= V;
-    U = 23*U;
-     V = 23*V;
-        end
-    end
-    end
+%     a = .1*a;
+% b = .5*b;
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U =TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)=U;
+%     MatrixV(j,:)= V;
+%     V = 1/min(V)*V;
+%     U = 1/min(U)*U;
+% else if(T(j)>=tm/4-epsilon && T(j)<=tm/4+epsilon)
+%     a = .1*a;
+% b = .9*b;
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U =TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)=U;
+%     MatrixV(j,:)= V;
+%     V = 150*V;
+%     U = 600*U;    
+% else if(T(j)>=tm/2-epsilon && T(j)<=tm/2+epsilon)
+%         a = .5*T(j)*a;
+%         b = .8*T(j)*b;
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U =TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)=U;
+%     MatrixV(j,:)= V;
+%     V = 70*V;
+%     U = 45*U;
+%     else if(T(j)>=3*tm/4-epsilon && T(j)<=3*tm/4+epsilon)
+%         a = .1*a;
+%         b = .9*b;
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U =TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)=U;
+%     MatrixV(j,:)= V;
+%     U = 23*U;
+%      V = 23*V;
+%         end
+%     end
+%     end
     %figure(1)
     
 %subplot(1,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% colorbar
-% shading interp
-% xlabel('x','fontsize',16) 
-% view(2)
-% ylabel('y','fontsize',16)
-% zlabel('u & v','fontsize',16)
+trisurf(LNODES,x,y,U(:,:))
+ colorbar
+shading interp
+xlabel('x','fontsize',16) 
+ view(2)
+ylabel('y','fontsize',16)
+zlabel('u','fontsize',16)
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-% axis equal tight
+title('Evolution of u at t = 9.0','fontsize',18)
+axis equal tight
 % subplot(1,2,2)
 % trisurf(LNODES,x,y,1.5/max(U)*U(:,:))
 % colorbar
@@ -227,49 +233,50 @@ else if(T(j)>=tm/2-epsilon && T(j)<=tm/2+epsilon)
 % zlabel('u & v','fontsize',16)
 % title(['Pattern formed by u at t = 30'])%at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-% %MV(j)=getframe(gcf);
-% pause(1e-10) 
+% MV(j)=getframe(gcf);
+pause(1e-10) 
 
 
-end
-    RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
-    RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
-    U = TMatrixU\RHSU;
-    V = TMatrixV\RHSV;
-    MatrixU(j,:)=U;
-    MatrixV(j,:)=V;
+% end
+%     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
+%     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
+%     U = TMatrixU\RHSU;
+%     V = TMatrixV\RHSV;
+%     MatrixU(j,:)=U;
+%     MatrixV(j,:)=V;
 end
 % 
 % set(findobj('type','legend'),'fontsize',16)
 % set(findobj('type','axes'),'fontsize',18)
-L2U = zeros(length(T),1);
-L2V = zeros(length(T),1);
+% L2U = zeros(length(T),1);
+% L2V = zeros(length(T),1);
+% 
+% for k = 1: length(T)-1
+%    if (k>=1 && k<=60)
+%     L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
+%     L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
+%    end
+%     L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
+%     L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
+% end
+% 
+% L2U(length(T))=L2U(length(T)-1);
+% L2V(length(T))=L2V(length(T)-1);
+% figure(1)
+% plot(T,.8/max(L2U)*L2U,'LineWidth',2,'color','r')
+% 
+% hold on
+% plot(T,.75/max(L2V)*L2V,'LineWidth',2,'color','b')
+% ylim([0 1.4]);
+% set(findobj('type','legend'),'fontsize',20)
+% set(findobj('type','axes'),'fontsize',20)
+% legend('(||U^{m+1}-U^m||/\tau)','(||V^{m+1}-V^m||/\tau)','Location','NorthEast')
+% xlabel('Time','fontsize',20)
+% % ylabel('log(||\cdot||_L_2)','fontsize',20)
+% ylabel('||\cdot||_L_2','fontsize',20)
+% title('Convergence of solutions','fontsize',16)
 
-for k = 1: length(T)-1
-   if (k>=1 && k<=60)
-    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
-    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
-   end
-    L2U(k) = sqrt(sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2)/(T(j)-T(j-1)));
-    L2V(k) = sqrt(sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2)/(T(j)-T(j-1)));
-end
-
-L2U(length(T))=L2U(length(T)-1);
-L2V(length(T))=L2V(length(T)-1);
-figure(1)
-plot(T,.8/max(L2U)*L2U,'LineWidth',2,'color','r')
-
-hold on
-plot(T,.75/max(L2V)*L2V,'LineWidth',2,'color','b')
-ylim([0 1.4]);
-set(findobj('type','legend'),'fontsize',20)
-set(findobj('type','axes'),'fontsize',20)
-legend('(||U^{m+1}-U^m||/\tau)','(||V^{m+1}-V^m||/\tau)','Location','NorthEast')
-xlabel('Time','fontsize',20)
-% ylabel('log(||\cdot||_L_2)','fontsize',20)
-ylabel('||\cdot||_L_2','fontsize',20)
-title('Convergence of solutions','fontsize',16)
-
-
-
+% movie2avi(MV,'Shell_pattern.avi');
+  set(findobj('type','legend'),'fontsize',18)
+set(findobj('type','axes'),'fontsize',18)
 

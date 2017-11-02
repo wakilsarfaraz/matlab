@@ -4,15 +4,15 @@
 tic
 clear all; close all; clc;
 xmax = 1;
-tm = 4;
-dt = .005;
+tm = 9;
+dt = .1;
 M = tm/dt;
-du = .1;
-dv = .1;
+du = 1;
+dv = 1;
 a = .1;
-b = 1.2;
-gam = 1;
-eps = .25;
+b = .9;
+gam = 50;
+eps = .01;
 N =64; 
 X = linspace(0,xmax,N+1);
 T = linspace(0,tm,M+1); 
@@ -162,20 +162,20 @@ end
 MatrixU = zeros(length(T),length(U));
 MatrixV = zeros(length(T),length(V));
 for j = 1:M+1
-if(T(j)>=tm/5-eps && T(j)<=tm/5+eps)
-    a = b*T(j);
-      b = a*T(j);
- gam =.03*gam*T(j);
-%     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
+ if(T(j)>=tm/4-eps && T(j)<=tm/4+eps)
+     a = b*T(j);
+       b = a*T(j);
+%  gam =.03*gam*T(j);
+% %     gam = 4*T(j)*gam*exp(abs((tm/4-T(j))^2));
     RHSU = (SPMM-dt*gam*SPMM+dt*gam*SPC)*U+dt*gam*a*A;
     RHSV = (SPMM-gam*dt*SPD)*V+dt*gam*b*A;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     MatrixU(j,:)= U;
     MatrixV(j,:)= V;
-end
-    
-% else if (T(j)>=tm/2-eps && T(j)<=tm/2+eps)
+% 
+%     
+% else if (T(j)>=tm/3-eps && T(j)<=tm/3+eps)
 % %     a = a*T(j);
 % %     b = b*exp((T(j)-tm/2)^2);
 % %      gam = gam*exp(-((T(j)-tm/2-eps)^2)/T(j));
@@ -200,7 +200,7 @@ end
 % %  
 %     end
 %     end
-% end
+end
 % a = 0.1;
 % b = 0.9;
 
@@ -262,15 +262,15 @@ end
 L2U(length(T))=L2U(length(T)-1);
 L2V(length(T))=L2V(length(T)-1);
 figure(1)
-plot(T,L2U,'LineWidth',2,'color','r')
+plot(T,1/max(L2U)*L2U,'LineWidth',2,'color','r')
 
 hold on
-plot(T,L2V,'LineWidth',2,'color','b')
+plot(T,1/max(L2V)*L2V,'LineWidth',2,'color','b')
 set(findobj('type','legend'),'fontsize',20)
 set(findobj('type','axes'),'fontsize',20)
-legend('log(||U^{m+1}-U^m||/\tau)','log(||V^{m+1}-V^m||/\tau)','Location','NorthEast')
+legend('||U^{m+1}-U^m||/\tau','||V^{m+1}-V^m||/\tau','Location','NorthEast')
 xlabel('Time','fontsize',20)
-ylabel('log(||\cdot||_L_2)','fontsize',20)
+ylabel('||\cdot||_L_2','fontsize',20)
 title('Convergence of solutions','fontsize',16)
 
 toc
