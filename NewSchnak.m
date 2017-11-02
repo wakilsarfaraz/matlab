@@ -1,36 +1,31 @@
-%% This script solves schnakenberg reaction kinetics on a fixed circle.
+%% This script solves schnakenberg reaction kinetics on a fixed square.
 % Wakil Sarfaraz   30/11/15
-clear all;
-
-%addpath distmesh
-
-
-% tm = 60;
-% dt = 0.1;
-tm = 30;
-dt = .01;
-
+clear all; close all; clc;
+format long;
+xmax = 1;
+tm = 10;
+dt = .1;
 M = tm/dt;
 
-du = .001;
-dv = .01;
-% dv = 5;
-a = .4;
+du = 1;
+dv = 10;
+a = 0.1;
 b = 0.9;
-gamma = 0.06;
+gam = 1000;
+
+N = 5; 
+% [ n_node,n_ele,node,ele] = triangulation_square( N );
+% A = sparse([],[],[],n_node,n_node,7*n_node);
+% MASS = sparse([],[],[],n_node,n_node,7*n_node);
+% rhs = zeros(n_node,1);
+
+X = linspace(0,xmax,N+1);
 T = linspace(0, tm,M+1); 
-
-xmax = 1;
-N = 20;
- fd=inline('sqrt(sum(p.^2,2))-1','p');
- [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
-
-x = p(:,1);
-y = p(:,2);
-
-NNODES = length(x);
-NTRI = size(t,1);
-LNODES = t;
+[x, y] = meshgrid(X,X); 
+                       
+x =x(:);  
+y =y(:);  
+NNODES = (N+1)^2;
 
 
 
@@ -38,64 +33,47 @@ U = zeros(NNODES,1);
 V = zeros(NNODES,1);
 
 
+
+
+
+  
+NTRI = 2*N^2;  
+LNODES = zeros(NTRI,3); 
+for i = 1:N
+    for j = 1: N
+        LNODES(i+2*(j-1)*N,1) = i+(j-1)*(N+1);
+        LNODES(i+2*(j-1)*N,2) = i+j*(N+1); 
+        LNODES(i+2*(j-1)*N,3) = (i+1)+(j-1)*(N+1); 
+        
+        LNODES(i+N+2*(j-1)*N,1) = i+1+j*(N+1); 
+        LNODES(i+N+2*(j-1)*N,2) = (i+1)+(j-1)*(N+1);
+        LNODES(i+N+2*(j-1)*N,3) = i+j*(N+1);
+                                   
+    end
+end
+
+figure(1)
+triplot(LNODES,x,y)
 for i = 1 : NNODES
 %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
 %         U(i) = 0;
 %         V(i) = 0;
 %     else
-%     U(i) = a + b + 0.001*exp(-10*(abs(sin((x(i)-0.5)^2+(y(i)-1/3)^2))));
-%     V(i) = a + b + 0.001*exp(sin(-10*((x(i)-0.5)^2+(y(i)-1/3)^2)));
-%   U(i) = a + b + 0.05*(cos(6*pi*x(i))+cos(6*pi*y(i)));
-%     V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
-
-
-      U(i) = a + b + 0.3*(cos(7*pi*x(i))+cos(7*pi*y(i)))+0.5*cos(5*pi*(x(i)^2+y(i)^2));
-    V(i) = b/(a+b)^2;%+0.1*(sin((x(i)+y(i)))); 
+    U(i) = a + b+0.01*cos(6*pi*x(i))*0.01*cos(6*pi*y(i)); 
+  
+    V(i) = b/(a+b)^2+ 0.01*cos(6*pi*x(i))*cos(6*pi*y(i));
     
-    
-%     U(i) = a + b + 0.15*cos(6*pi*(x(i)^2+y(i)^2));
-%     V(i) = b/(a+b)^2;
 %     end
 end
-% for i = 1 : NNODES
-% %     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
-% %         U(i) = 0;
-% %         V(i) = 0;
-% %     else
-% %     U(i) = a + b + exp(-cos(17*(x(i)))-cos(17*y(i)));
-%     U(i) = a + b+exp(-cos(50*pi*(x(i)^2+y(i)^2)));%exp(-0.3*cos(3*pi*abs(y(i)))^2-0.3*cos(3*pi*abs(x(i)))^2);%+cos(2*pi*(y(i)^2))+cos(2*pi*x(i)^2);%+ 0.01*exp((((x(i)-0.5)^2+(y(i)-1/3)^2))); 
-%     V(i) = b/(a+b)^2;%+exp(-sin(50*pi*(x(i)^2+y(i)^2)));
-% %   U(i) = a + b + 0.1*(sin((xmax*pi*x(i)))+sin((xmax*pi*y(i))));
-% %   V(i) = b/(a+b)^2;%+0.001*(sin((x(i)+y(i)))); 
-% %     end
-% end
 ui = [min(U) max(U)]
 vi = [min(V) max(V)]
-% figure(1)
-% title ('Schnakenberg Kinetics with Du=40, Dv=2, gamma=500')
-% subplot (2,2,1)
-% trisurf(LNODES,x,y,U(:,:))
-% xlabel('x')
-% ylabel('y')
-% view(2)
-% legend('Initial u')
-% shading interp
-% axis equal tight
-% subplot(2,2,2)
-% trisurf(LNODES,x,y,V(:,:))
-% xlabel('x')
-% ylabel('y')
-% view(2)
-% legend('Initial v')
-% shading interp
-% axis equal tight
 
 
 
 SPSM = sparse(NNODES, NNODES);
 SPMM = sparse(NNODES, NNODES);
-SPC  = sparse (NNODES,NNODES);
-SPD  = sparse (NNODES,NNODES);
+SPC = sparse(NNODES,NNODES);
+SPD =sparse (NNODES,NNODES);
 
 UG = zeros(NNODES,1);
 VG = zeros(NNODES,1);
@@ -113,7 +91,7 @@ for n = 1: NTRI
            (r2-r3)*(r3-r1)' (r3-r1)*(r3-r1)' (r3-r1)*(r1-r2)';...
            (r2-r3)*(r1-r2)' (r3-r1)*(r1-r2)' (r1-r2)*(r1-r2)']; 
        
-MassL = det(J)*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
+ MassL = det(J)*[1/12 1/24 1/24; 1/24 1/12 1/24; 1/24 1/24 1/12]; 
  
 
  CL = det(J)/360*[12*U(LNODES(n,1))*V(LNODES(n,1))+3*(U(LNODES(n,1))*V(LNODES(n,2))+U(LNODES(n,2))*V(LNODES(n,1))+...
@@ -153,8 +131,8 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
     U(LNODES(n,1))*U(LNODES(n,2)))];
     
  
- UL = det(J)*[1/6;1/6;1/6];
- VL = det(J)*[1/6;1/6;1/6];
+ UL = a*det(J)*[1/6;1/6;1/6];
+ VL = b*det(J)*[1/6;1/6;1/6];
    
    
    
@@ -180,12 +158,11 @@ DL = det(J)/360*[12*U(LNODES(n,1))^2+6*(U(LNODES(n,1))*U(LNODES(n,2))+U(LNODES(n
 end
 
 
- TMatrixU =  SPMM+dt*du*SPSM+dt*gamma*SPMM+dt*gamma*SPC;% TMatrixU =  SPMM-dt*du*SPSM+dt*gamma*SPMM-dt*gamma*SPC;
- TMatrixV =  SPMM+dt*dv*SPSM+gamma*SPD;
+ TMatrixU =  SPMM+dt*du*SPSM+dt*gam*SPMM-dt*gam*SPC;
+ TMatrixV =  SPMM+dt*dv*SPSM+gam*SPD;
 
-
-% for i = 1 : NNODES
-%     if (abs(fd(p(i,:)))<=1e-8 )
+% for i = 1: NNODES
+%     if (x(i)==0 || x(i)==xmax || y(i)==0 || y(i)==xmax)
 %         RHSU(i) = 0;
 %         RHSV(i) = 0;
 %         TMatrixU(i,:) = 0;
@@ -193,107 +170,87 @@ end
 %         TMatrixU(i,i) = 1;
 %         TMatrixV(i,i) = 1;
 %     end
+% 
 % end
 
 
-% Tdiffu = zeros(1,length(T));
-% Tdiffv = zeros(1,length(T));
-MatrixU = zeros(length(T),length(U));
-MatrixV = zeros(length(T),length(U));
+
 for j = 1:M+1
 
 
-
-
-    RHSU = SPMM*U+dt*gamma*a*UG;
-    RHSV = SPMM*V+dt*gamma*b*VG;
+    RHSU = SPMM*U+dt*gam*UG;
+    RHSV = SPMM*V+dt*gam*VG;
     U = TMatrixU\RHSU;
     V = TMatrixV\RHSV;
     
-%    Tdiffu(j) = sum((U(j+1)-U(j)).^2);
-%     Tdiffv(j) = sum((V(j+1)-V(j)).^2);
-%     figure(1)
-   MatrixU(j,:) = U;
-   MatrixV(j,:) = V;
-% subplot(1,2,1)
-trisurf(LNODES,x,y,1.2/max(U)*U(:,:))
-
-% colorbar
-shading interp
-xlabel('x','fontsize',16) 
-view(2)
-ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-axis off
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
-axis equal tight
-% subplot(1,2,2)
+    figure(1)
+    
+%subplot(1,2,1)
 % trisurf(LNODES,x,y,U(:,:))
-% %colorbar
+% colorbar
 % shading interp
 % xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
 % view(2)
 % ylabel('y','fontsize',16)
 % zlabel('u & v','fontsize',16)
-% title(['Pattern formed by u] at t= ',num2str(T(j))],'fontsize',8)
+% title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-MV(j)=getframe(gcf);
- pause(1e-10) 
+% subplot(1,2,2)
+% figure(2)
+% trisurf(LNODES,x,y,U(:,:))
+% % colorbar
+% shading interp
+% xlabel('x','fontsize',16) 
+% xlim([0 xmax])
+% ylim([0 xmax])
+% view(2)
+% ylabel('y','fontsize',16)
+% zlabel('u & v','fontsize',16)
+% title(['Evolution of v at t= ',num2str(T(j))],'fontsize',8)
+% axis equal tight
+% %MV(j)=getframe(gcf);
+% pause(1e-10) 
 
 
 
 end
-% figure(2)
-% subplot(1,2,1)
-% plot(T,Tdiffu)
-% xlabel('Time')
-% ylabel('L2 Difference')
-% title('U')
-% subplot(1,2,2)
-% plot(T,Tdiffv)
-% title('V')
-% xlabel('Time')
-% ylabel('L2 Difference')
+
+
 %figure(2)
 % subplot(2,2,3)
-%  trisurf(LNODES,x,y,1/max(U)*U(:,:))
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
+%  trisurf(LNODES,x,y,U(:,:))
+%  %trisurf(LNODES,x,y,1/max(V)*V(:,:))
+%  xlim([0 xmax])
+%  ylim([0 xmax])
 %  xlabel('x')
 %  ylabel('y')
+%  %zlabel('u and v')
 %  view(2)
+%  %title ('Pattern formed by u')
 %  legend('Evolved pattern of u')
 %  shading interp
 %  axis equal tight
 %  subplot(2,2,4)
-%  trisurf(LNODES,x,y,abs(V(:,:)))
-%  colorbar
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:),1/max(V)*V(:,:))
+%  %trisurf(LNODES,x,y,1/max(U)*U(:,:))
+%  trisurf(LNODES,x,y,V(:,:))
+%  xlim([0 xmax])
+%  ylim([0 xmax])
 %  xlabel('x')
 %  ylabel('y')
+%  %zlabel('u and v')
 %  view(2)
+%  %title ('Pattern formed by v')
 %  legend('Evolved pattern of v')
 %  shading interp
 %  axis equal tight
-movie2avi(MV,'Disc_pattern.avi');
-% figure(1)
-% L2U = zeros(length(T),1);
-% L2V = zeros(length(T),1);
-% 
-% for k = 1: length(T)-1
-%    
-%     L2U(k) = sum(abs(MatrixU(k+1,:)-MatrixU(k,:)).^2);
-%     L2V(k) = sum(abs(MatrixV(k+1,:)-MatrixV(k,:)).^2);
-% end
-% 
-% 
-% plot(T,L2U,'LineWidth',3,'color','r')
-% 
-% hold on
-% plot(T,L2V,'LineWidth',3,'color','b')
-  set(findobj('type','legend'),'fontsize',18)
-set(findobj('type','axes'),'fontsize',18)
-% legend('||U^{m+1}-U^m||_L_2','||V^{m+1}-V^m||_{L_2}')
-% xlabel('Time','fontsize',18)
-% ylabel('||\cdot||_L_2','fontsize',18)
-% title('Convergence of solutions','fontsize',16)
-% uf = [min(U) max(U)]
-% vf = [min(V) max(V)]
+%movie2avi(MV,'SpotsToSptripes.avi');
+uf = [min(abs(U)) max(abs(U))]
+vf = [min(abs(V)) max(abs(V))]
+ 
+ 
+ 
 

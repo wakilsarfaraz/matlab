@@ -3,7 +3,7 @@
 clear all;
 tic
 xmax = 1;
-N = 30;
+N = 40;
  fd=inline('sqrt(sum(p.^2,2))-0.5','p');
  [p,t]=distmesh2d(fd,@huniform,xmax/N,[-1,-1;1,1],[]);
 
@@ -66,13 +66,15 @@ toc
 
  u = cos(pi/2*(x.^2+y.^2));
  u = u-min(u);
+% nu = 0.3;
+% u = besselj(nu,x.^2+y.^2)+besselj(-n,(x.^2+y.^2));
 
  
 
 
 figure(1)
 
-% subplot(1,2,1)
+ subplot(1,2,1)
 %figure(1)
 trisurf(LNODES,x,y,u)
 %view(2)
@@ -85,8 +87,8 @@ zlabel('u(x,y)')
 title('Exact Solution')
 shading interp
 
-% subplot(1,2,2)
-figure(2)
+ subplot(1,2,2)
+%figure(2)
 trisurf(LNODES,x,y,U)
 %view(2)
 xlim([-1 1]);
@@ -99,8 +101,8 @@ title('Numerical Solution')
 shading interp
 D = abs(U-u);
 C = u-U;
-figure(3)
-trisurf(LNODES,x,y,C)
+%figure(3)
+%trisurf(LNODES,x,y,C)
 % 
  Error = sum(D.^2)
 %  

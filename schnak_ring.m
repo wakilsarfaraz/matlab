@@ -8,12 +8,12 @@ clear all;
 N = 50;
 xmax = 1;
 
-tm = 2;
+tm = 6;
 dt = 0.01;
 M = tm/dt;
 
 du = 0.01;
-dv = 5;
+dv = 5.0001;
 a = 0.1;
 b = 0.9;
 % gam = 39.596;
@@ -198,21 +198,24 @@ for j = 1:M+1
 % title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
 % subplot(1,2,2)
-trisurf(LNODES,x,y,V(:,:))
+trisurf(LNODES,x,y,1/max(V)*V(:,:)-min(V))
+% colormap(U);
 %colorbar
 shading interp
 xlabel('x','fontsize',16) 
-view(2)
+ view(2)
 ylabel('y','fontsize',16)
-zlabel('u & v','fontsize',16)
-title(['Pattern formed by u'])%at t= ',num2str(T(j))],'fontsize',8)
+zlabel('u','fontsize',16)
+title(['Pattern formed by u at t= ',num2str(T(j))],'fontsize',8)
 axis equal tight
-%MV(j)=getframe(gcf);
+MV(j)=getframe(gcf);
 pause(1e-10) 
 
 
 
 end
+
+movie2avi(MV,'Ring_pattern.avi');
 
 % figure(2)
 % subplot(1,2,1)
@@ -245,6 +248,7 @@ end
 %  shading interp
 %  axis equal tight
 %movie2avi(MV,'SpotsToSptripes.avi');
-
-uf = [min(U) max(U)]
-vf = [min(V) max(V)]
+  set(findobj('type','legend'),'fontsize',18)
+set(findobj('type','axes'),'fontsize',18)
+% uf = [min(U) max(U)]
+% vf = [min(V) max(V)]

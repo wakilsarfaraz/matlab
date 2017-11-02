@@ -1,10 +1,10 @@
-% This script simulates the parameter space for reaction system without
+% This script simulates the parameter space for reaction system with
 % diffusion with Schnakneberg Model.
 % Author Wakil Sarfaraz 25/04/2016
-clear all;
+%clear all;
 tic
 xmax =1;
-N = 3000; %(Number of points on the x, y interval on which the equation is solved.
+N = 40; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -39,7 +39,8 @@ end
 
 m = 1;
 n = 1;
-L = 100;
+%L = 100;
+L = 15;
 % T = (-(x+y).^3-x+y)./(x+y)-((d+1)*(n^2+m^2)*pi^2)/xmax^2;
 % D = ((y-x)./(y+x)-((n^2+m^2)*pi^2)/xmax^2).*(-(y+x).^2-(d+1)*((n^2+m^2)*pi^2)/xmax^2)+2*y.*(y+x);
 % Dcr = T.^2-4*D;
@@ -56,45 +57,101 @@ L = 100;
 %  
 gam = 1.;
 % d = Diff(k);
-d =10;
+d = 5;
 T = gam*(-(x+y).^3-x+y)./(x+y)-((d+1)*(n^2+m^2)*pi^2)/L^2;
 D = (gam*(y-x)./(y+x)-((n^2+m^2)*pi^2)/L^2).*(-gam*(y+x).^2-(d+1)*((n^2+m^2)*pi^2)/L^2)+2*gam^2*y.*(y+x);
 Dcr = T.^2-4*D;
 img = sqrt(Dcr);
 
 Ru = zeros(NNODES, 2);
-Ru = zeros(NNODES, 2);
 for i = 1: NNODES
     for j = 1 : 3
-    if (Dcr(LNODES(i,j))<=1e-3 && Dcr(LNODES(i,j))>=-1e-3 )
-        Ru1(i,1) = x(LNODES(i,j));
-        Ru1(i,2) = y(LNODES(i,j));
+    %if (Dcr(LNODES(i,j))<=1e-2 && Dcr(LNODES(i,j))>=-1e-2 )
+    %if(Dcr(LNODES(i,j))<0 && T(LNODES(i,j))<0)
+    %if(Dcr(LNODES(i,j))>0 && T(LNODES(i,j))+sqrt(Dcr(LNODES(i,j)))>0)
+    %if(Dcr(LNODES(i,j))<0 && T(LNODES(i,j))>0)
+    if(T(LNODES(i,j))<=1e-3 && T(LNODES(i,j))>=-1e-3 && D(LNODES(i,j))>0)
+        Ru(i,1) = x(LNODES(i,j));
+        Ru(i,2) = y(LNODES(i,j));
     end
   
     end
     
 end
-plot(Ru(:,1),Ru(:,2),'.','Color','y')
+plot(Ru(:,1),Ru(:,2),'.','Color','k')
 %  hold on
-% text(0.0001,0.2,'Unstable in absence of diffusion, d=0','fontsize',10)
- text(0.05,0.5,'\cdot','fontsize',50)
-%  text(0.085,0.35,'c2','fontsize',16)
-%  text(0.085,0.2,'c3','fontsize',16)
-%  text(0.07,0.13,'c4','fontsize',16)
-%  text(0.03,0.05,'c5','fontsize',16)
-% text(0.06,0.55,'\leftarrow F','fontsize',13)
-% text(0.001,0.675,'G','fontsize',13)
+%  text(0.4,1.8,'d=1.5','fontsize',15)
+%  text(0.45,1.4,'d=2','fontsize',15)
+%   text(0.2,1.05,'d=2.3','fontsize',15)
+%   text(0.45,0.55,'d=2.8','fontsize',15)
+%  text(0.45,0.22,'d=3.5','fontsize',15)
+
+%  text(1.1,0.85,'d=2','fontsize',15)
+%  text(0.95,0.85,'d=4','fontsize',15)
+%   text(0.85,0.85,'d=6','fontsize',15)
+%   text(0.75,0.85,'d=8','fontsize',15)
+%  text(0.6,0.85,'d=10','fontsize',15)
+
+%  text(0.6,0.1,'E','fontsize',20)
+% text(0.55,0.45,'D','fontsize',20)
+% text(0.35,0.85,'C','fontsize',20)
+% text(0.1,1.4,'B','fontsize',20)
+% text(0.15,1.75,'A','fontsize',20)
+
+%  text(1,1.5,'A','fontsize',20)
+% text(0.55,0.45,'E','fontsize',20)
+% text(0.35,0.85,'D','fontsize',20)
+% text(0.1,1.4,'C','fontsize',20)
+% text(0.15,1.75,'B','fontsize',20)
+
+%  text(0.0245,0.34,'A','fontsize',20)
+% text(0.0225,0.33,'B','fontsize',20)
+% text(0.0215,0.295,'C','fontsize',20)
+% text(0.02,0.28,'D','fontsize',20)
+% text(0.01,0.3,'E','fontsize',20)
+
+% text(1.25,0.2,'E','fontsize',20)
+% text(1.17,0.2,'D','fontsize',20)
+% text(1.08,0.2,'C','fontsize',20)
+% text(0.98,0.2,'B','fontsize',20)
+% text(0.82,0.2,'A','fontsize',20)
+% 
+% text(1.25,0.2,'B','fontsize',20)
+% text(1.17,0.2,'C','fontsize',20)
+% text(1.08,0.2,'D','fontsize',20)
+% text(0.98,0.2,'E','fontsize',20)
+% text(1.34,0.2,'A','fontsize',20)
+
+% text(0.025,0.35,'E','fontsize',20)
+% text(0.07,0.35,'D','fontsize',20)
+% text(0.105,0.35,'C','fontsize',20)
+% text(0.13,0.35,'B','fontsize',20)
+% text(0.147,0.35,'A','fontsize',20)
+
+% text(0.001,0.67,'E','fontsize',20)
+% text(0.025,0.59,'D','fontsize',20)
+% text(0.06,0.49,'C','fontsize',20)
+% text(0.085,0.4,'B','fontsize',20)
+% text(0.105,0.4,'A','fontsize',20)
+
+text(0.018,0.58,'c1','fontsize',20)
+text(0.056,0.46,'c2','fontsize',20)
+text(0.076,0.38,'c3','fontsize',20)
+text(0.084,0.25,'c4','fontsize',20)
+text(0.07,0.14,'c5','fontsize',20)
+
 % % legend('d=1.5')
-title('Turing space for d=10, \gamma=1','fontsize',20)
+title('Transcritical bifurcation curves','fontsize',24)
+%legend('Black:     d=2','Magenta:d=4','Green:    d=6','Red:       d=8','Blue:      d=10')
 % title(['Unstable region with d=',num2str(Diff(k))],'fontsize',6)
 xlabel('\alpha','fontsize',25)
 ylabel('\beta','fontsize',25)
 set(findobj('type','legend'),'fontsize',20)
 set(findobj('type','axes'),'fontsize',20)
 % 
-% xlim([0 0.06])
-%  ylim([0 0.6])
-% hold on
+%   xlim([0 1.4])
+%    ylim([0 2.5])
+ hold on
 
 % Ru1 = zeros(NNODES, 2);
 % Ru1 = zeros(NNODES, 2);

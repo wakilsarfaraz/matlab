@@ -3,8 +3,8 @@
 % Author Wakil Sarfaraz 25/04/2016
 clear all;
 tic
-xmax =5;
-N = 2000; %(Number of points on the x, y interval on which the equation is solved.
+xmax =1;
+N = 30; %(Number of points on the x, y interval on which the equation is solved.
 X = linspace(0,xmax,N+1); %This divides the interval into N equispaced sub intervals.
 %X = 0: 1/N :1; This can also be used to create the same X.
 [x, y] = meshgrid(X,X); % This creates an (N+1) by (N+1) grid of values ...
@@ -32,40 +32,73 @@ for i = 1:N
     end
 end
 
+u = cos(3*pi*x).*cos(3*pi*y);
 
-T = (-(x+y).^3-x+y)./(x+y);
-D = (x+y).^2;
-C1 = y-x-(y+x).^3-2*(y+x).^2;
-C2 = y-x-(y+x).^3+2*(y+x).^2;
-
-Dcr = T.^2-4*D;
-
-Tr = zeros(NNODES, 2);
-for i = 1: NNODES
-    for j = 1 : 3
-        if(C1(LNODES(i,j))>=-1e-3 && C1(LNODES(i,j))<=1e-3)
-        Tr(i,1) = x(LNODES(i,j));
-        Tr(i,2) = y(LNODES(i,j));
-        end
- 
-%   
-    end
-%     
-end
+trisurf(LNODES,x,y,u);
+axis equal tight
+colorbar
+view(2)
+shading interp
+title('Eigenmode for m = 3, n = 3')
+xlabel('x')
+ylabel('y')
+% T = (-(x+y).^3-x+y)./(x+y);
+% D = (x+y).^2;
+% C1 = y-x-(y+x).^3-2*(y+x).^2;
+% C2 = y-x-(y+x).^3+2*(y+x).^2;
+% 
+% Dcr = T.^2-4*D;
+% 
+% Tr = zeros(NNODES, 2);
+% for i = 1: NNODES
+%     for j = 1 : 3
+%         %if(C1(LNODES(i,j))>=-1e-3 && C1(LNODES(i,j))<=1e-3)
+%         %if(Dcr(LNODES(i,j))<=1e-2 && Dcr(LNODES(i,j))>=-1e-2)
+%         if(T(LNODES(i,j))<=1e-3 && T(LNODES(i,j))>=-1e-3)
+%         %if(Dcr(LNODES(i,j))<0 && T(LNODES(i,j))>0)
+%         %if(Dcr(LNODES(i,j))<=1e-2 && Dcr(LNODES(i,j))>=-1e-2 && T(LNODES(i,j))>0)
+%        %if(Dcr(LNODES(i,j))>0 && T(LNODES(i,j))+sqrt(Dcr(LNODES(i,j)))>0)
+%        %if(T(LNODES(i,j))>0)
+%         Tr(i,1) = x(LNODES(i,j));
+%         Tr(i,2) = y(LNODES(i,j));
+%         end
+%  
+% %   
+%     end
+% %     
+% end
 
 
 % % 
 % figure(1)
 % %subplot(2,2,1)
-plot(Tr(:,1),Tr(:,2),'.','Color','b')
-hold on
+% plot(Tr(:,1),Tr(:,2),'.','Color','y')
+% hold on
 % % text(.6,1,'A','fontsize',16)
-% %legend('Stable Spiral')
-% title('Stability plot for real \lambda','fontsize',16)
-% xlabel('\alpha','fontsize',18)
-% ylabel('\beta','fontsize',18)
-%  xlim([0 1.36])
-%  ylim([0 2.5])
+%legend('c1 & c3: Repeated real eigenvalues','c2: Pure imaginary eigenvalues')
+%legend('c1: Repeated real negative e-values','c3: Repeated real positive e-values')
+% legend('A: Both e-values complex with negative real part','B: Both e-values complex with positive real part')
+ %legend('A: Nagative real distinct e-values','B: Both e-values real, at least one positive')
+% legend('A: Stable node','B: Unstable node','C: Stable spiral','D: Unstable spiral','c1: Stable star','c3: Unstable star','c2: Centre')
+% title('Classfication and stability partition','fontsize',22)
+%  xlabel('\alpha','fontsize',22)
+%  ylabel('\beta','fontsize',22)
+%    text(0.6,1.,'A','fontsize',22)
+%    text(0.05,0.45,'B','fontsize',22)
+%    text(1,1.5,'A','fontsize',22)
+%    text(0.01,0.2,'B','fontsize',22)
+%       text(0.2,0.7,'A','fontsize',22)
+%    text(0.05,0.7,'B','fontsize',22)
+%    text(.16,0.38,' c3\rightarrow','fontsize',20)
+% text(1.25,0.85,'A','fontsize',20)
+% text(0.6,0.4,'C','fontsize',20)
+% text(0.05,0.5,'D','fontsize',20)
+% text(0.005,0.19,'B','fontsize',20)
+% text(0.24,0.3,'\leftarrow c2','fontsize',20)
+% text(1.15,0.2,'c1 \rightarrow','fontsize',20)
+% text(0.04,0.3,'\leftarrow c3','fontsize',16)
+%   xlim([0 1.4])
+%   ylim([0 2.55])
 % hold on
 
   
@@ -86,10 +119,12 @@ hold on
 %     
 % end
 %    plot(Ru1(:,1),Ru1(:,2),'.','Color','y')
-%    text(0.08,0.3,'\leftarrow c2','fontsize', 16)
-%    text(.8,1,'c1 \rightarrow','fontsize',16)
-%    text(1.2,1.5,'A','fontsize',16)
-%    text(0,0.2,'B','fontsize',16)
+% 
+%        text(1.11,0.4,' c1\rightarrow','fontsize', 20)
+        %text(.16,0.38,' c3\rightarrow','fontsize',20)
+%      text(.2,0.7,'\leftarrow c2','fontsize',20)
+
+
 %legend('Unstable spiral')
 % Rg1 = zeros(NNODES, 2);
 % for i = 1: NNODES
@@ -264,8 +299,8 @@ hold on
 % % text(.2,0.5,'\leftarrow c2','fontsize', 14)
 % legend('A: \lambda_1 & \lambda_2 both real negative','B: \lambda_1 or \lambda_2 or both real positive',...
 %     'c1: Stable star','c2: Unstable star')
-% set(findobj('type','legend'),'fontsize',10)
-% set(findobj('type','axes'),'fontsize',12)
+set(findobj('type','legend'),'fontsize',16)
+set(findobj('type','axes'),'fontsize',22)
 % hold off
 % title('Two repeated real e-values','fontsize',6)
 % xlabel('alpha')
