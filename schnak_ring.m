@@ -41,7 +41,7 @@ for i = 1 : NNODES
     else
 
 
-    U(i) = a + b + 0.001*exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
+    U(i) = a + b + 0.001*exp(-100*((x(i)-0.8)^2+(y(i)-1/3)^2));
     %V(i) = a + b + 0.001*exp(-100*((x(i)-0.5)^2+(y(i)-1/3)^2));
   
     V(i) = b/(a+b)^2; 
@@ -176,6 +176,8 @@ end
 Tdiffu = zeros(1,length(T));
 Tdiffv = zeros(1,length(T));
 
+v = VideoWriter ('~/Dropbox/WakilAnotida/Movies/RingPattern.avi');
+open (v) ;
 for j = 1:M+1
 
 
@@ -199,23 +201,31 @@ for j = 1:M+1
 % axis equal tight
 % subplot(1,2,2)
 trisurf(LNODES,x,y,1/max(V)*V(:,:)-min(V))
-% colormap(U);
+colormap(hsv);
 %colorbar
 shading interp
 xlabel('x','fontsize',16) 
- view(2)
+%view(2)
 ylabel('y','fontsize',16)
 zlabel('u','fontsize',16)
-title(['Pattern formed by u at t= ',num2str(T(j))],'fontsize',8)
+title(['Turing pattern formation at time t= ',num2str(T(j))],'fontsize',20)
+%title('Turing pattern','fontsize',20)
 axis equal tight
-MV(j)=getframe(gcf);
+%MV(j)=getframe(gcf);
+    frame = getframe (gcf);
+    writeVideo (v, frame); 
 pause(1e-10) 
 
 
 
 end
 
-movie2avi(MV,'Ring_pattern.avi');
+close(v)
+
+  set(findobj('type','legend'),'fontsize',18)
+set(findobj('type','axes'),'fontsize',18)
+
+%movie2avi(MV,'Ring_pattern.avi');
 
 % figure(2)
 % subplot(1,2,1)

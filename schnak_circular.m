@@ -200,6 +200,10 @@ end
 % Tdiffv = zeros(1,length(T));
 MatrixU = zeros(length(T),length(U));
 MatrixV = zeros(length(T),length(U));
+
+v = VideoWriter ('~/Dropbox/WakilAnotida/Movies/StongraySpots.avi');
+open (v) ;
+
 for j = 1:M+1
 
 
@@ -217,15 +221,17 @@ for j = 1:M+1
    MatrixV(j,:) = V;
 % subplot(1,2,1)
 trisurf(LNODES,x,y,1.2/max(U)*U(:,:))
+    colorbar 
+    colormap(hsv)
 
-% colorbar
+grid on
 shading interp
 xlabel('x','fontsize',16) 
-view(2)
+%view(2)
 ylabel('y','fontsize',16)
 zlabel('u & v','fontsize',16)
 axis off
-title(['Evolution of u at t= ',num2str(T(j))],'fontsize',8)
+title(['Stingray spots dynamics t= ',num2str(T(j))],'fontsize',20)
 axis equal tight
 % subplot(1,2,2)
 % trisurf(LNODES,x,y,U(:,:))
@@ -237,12 +243,15 @@ axis equal tight
 % zlabel('u & v','fontsize',16)
 % title(['Pattern formed by u] at t= ',num2str(T(j))],'fontsize',8)
 % axis equal tight
-MV(j)=getframe(gcf);
+%MV(j)=getframe(gcf);
+    frame = getframe (gcf);
+    writeVideo (v, frame); 
  pause(1e-10) 
 
 
 
 end
+close(v)
 % figure(2)
 % subplot(1,2,1)
 % plot(T,Tdiffu)
@@ -272,7 +281,7 @@ end
 %  legend('Evolved pattern of v')
 %  shading interp
 %  axis equal tight
-movie2avi(MV,'Disc_pattern.avi');
+%movie2avi(MV,'Disc_pattern.avi');
 % figure(1)
 % L2U = zeros(length(T),1);
 % L2V = zeros(length(T),1);

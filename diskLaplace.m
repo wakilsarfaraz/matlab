@@ -1,5 +1,8 @@
 %% This program solves Poisson's equation in Cartesian coordinates.
-% Wakil Sarfaraz with Help of Dr Kathryn Gillow. 22 May 2014 
+% The equation Laplace u = 1 with homogenous dirichlet B.C.
+% Both analytical and numerical solutions are compared.
+% Author: Wakil Sarfaraz  
+
 clear all;
 tic
 xmax = 1;
@@ -69,12 +72,14 @@ toc
 % nu = 0.3;
 % u = besselj(nu,x.^2+y.^2)+besselj(-n,(x.^2+y.^2));
 
+c = (U-u).^2
+
  
 
 
 figure(1)
 
- subplot(1,2,1)
+ subplot(3,1,1)
 %figure(1)
 trisurf(LNODES,x,y,u)
 %view(2)
@@ -87,7 +92,7 @@ zlabel('u(x,y)')
 title('Exact Solution')
 shading interp
 
- subplot(1,2,2)
+ subplot(3,1,2)
 %figure(2)
 trisurf(LNODES,x,y,U)
 %view(2)
@@ -98,6 +103,19 @@ xlabel('x')
 ylabel('y')
 zlabel('U(x,y)')
 title('Numerical Solution')
+shading interp
+
+ subplot(3,1,3)
+%figure(2)
+trisurf(LNODES,x,y,c)
+%view(2)
+xlim([-1 1]);
+ylim([-1 1]);
+%zlim([0 1]);
+xlabel('x') 
+ylabel('y')
+zlabel('||U-u||^2')
+title('Truncation error')
 shading interp
 D = abs(U-u);
 C = u-U;
